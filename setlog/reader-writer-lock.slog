@@ -10,7 +10,7 @@ def_type(processWithNull,sum([nullProcess,u(process)])).
 
 def_type(pwrprocess,set(processWithNull)).
 def_type(lockState,enum([locked,unlocked])).
-def_type(res,enum([ok,cantBeLessThanOne,cantAllowMoreReaders,lockedByWriter,lockedByReader,cantLockWithNullProcess,cantAllowMoreReaders])).
+def_type(res,enum([ok,cantBeLessThanOne,cantAllowMoreReaders,lockedByWriter,lockedByReader,cantLockWithNullProcess,cantAllowMoreReaders,errorReadNotAcquired,errorWriteNotLocked,errorWriteLockedByOtherProcess])).
 
 %%%%%%%%%%%%%%%%%%%%%
 % -- Invariantes -- %
@@ -172,3 +172,68 @@ acquireWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLock
 %%%%%%%%%%%%%%%%%%%%%%
 % -- Release Read -- %
 %%%%%%%%%%%%%%%%%%%%%%
+dec_p_type(releaseReadOk(pwrprocess,lockState,processWithNull,int,processWithNull,res,pwrprocess,lockState,processWithNull,int)).
+releaseReadOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    P in Readers &
+    diff(Readers, {P}, Readers_) &
+    Res = ok &
+    Writer_ = Writer &
+    WriterLockState_ = WriterLockState & 
+    MaxReaders_ = MaxReaders.
+
+dec_p_type(readNotAcquired(pwrprocess,lockState,processWithNull,int,processWithNull,res,pwrprocess,lockState,processWithNull,int)).
+readNotAcquired(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    P nin Readers &
+    Res = errorReadNotAcquired &
+    MaxReaders_ = MaxReaders &
+    Readers_ = Readers &
+    Writer_ = Writer &
+    WriterLockState_ = WriterLockState.
+
+operation(releaseRead).
+dec_p_type(releaseRead(pwrprocess,lockState,processWithNull,int,processWithNull,res,pwrprocess,lockState,processWithNull,int)).
+releaseRead(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    releaseReadOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    or
+    readNotAcquired(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% -- Release Write -- %
+%%%%%%%%%%%%%%%%%%%%%%%
+dec_p_type(releaseWriteOk(pwrprocess,lockState,processWithNull,int,processWithNull,res,pwrprocess,lockState,processWithNull,int)).
+releaseWriteOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    WriterLockState = locked &
+    Writer = P &
+    WriterLockState_ = unlocked &
+    Writer_ = nullProcess &
+    Res = ok &
+    Readers_ = Readers_ &
+    MaxReaders_ = MaxReaders.
+
+dec_p_type(writeNotLocked(pwrprocess,lockState,processWithNull,int,res,pwrprocess,lockState,processWithNull,int)).
+writeNotLocked(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    WriterLockState = unlocked &
+    Res = errorWriteNotLocked &
+    MaxReaders_ = MaxReaders &
+    Readers_ = Readers &
+    Writer_ = Writer &
+    WriterLockState_ = WriterLockState.
+
+dec_p_type(lockedByOtherProcess(pwrprocess,lockState,processWithNull,int,processWithNull,res,pwrprocess,lockState,processWithNull,int)).
+lockedByOtherProcess(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    WriterLockState = locked &
+    writer =\= P &
+    Res = errorWriteLockedByOtherProcess &
+    MaxReaders_ = MaxReaders &
+    Readers_ = Readers &
+    Writer_ = Writer &
+    WriterLockState_ = WriterLockState.
+
+operation(releaseWrite).
+dec_p_type(releaseWrite(pwrprocess,lockState,processWithNull,int,processWithNull,res,pwrprocess,lockState,processWithNull,int)).
+releaseWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    releaseWriteOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    or
+    writeNotLocked(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    or
+    lockedByOtherProcess(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
