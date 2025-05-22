@@ -1,0 +1,6 @@
+-- Como correr setlog
+consult('setlog.pl').
+setlog.
+
+-- Como cargar la spec
+consult('reader-writer-lock.slog').

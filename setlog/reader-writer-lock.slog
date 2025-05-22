@@ -1,0 +1,29 @@
+variables([Readers,WriterLockState,Writer,MaxReaders]).
+
+def_type(processWithNull,sum([nullProcess,u(process)])).
+
+def_type(pwrprocess,set(processWithNull)).
+def_type(lt,enum([locked,unlocked])).
+def_type(res,enum([ok,cantBeLessThanOne])).
+
+invariant(invMaxReadersPositive).
+dec_p_type(invMaxReadersPositive(int)).
+invMaxReadersPositive(MaxReaders) :- MaxReaders > 0.
+
+invariant(invReadersLessThanMaxReaders).
+dec_p_type(invReadersLessThanMaxReaders(pwrprocess, int)).
+invReadersLessThanMaxReaders(Readers, MaxReaders) :- 
+    size(Readers, N) & 
+    N =< MaxReaders.
+
+invariant(invNoReadersWhileWriter).
+dec_p_type(invNoReadersWhileWriter(lt, pwrprocess)).
+invNoReadersWhileWriter(WriterLockState, Readers) :- 
+    WriterLockState = locked implies Readers = {}.
+
+initial(readersWriterLockInit).
+readersWriterLockInit(Readers,WriterLockState,Writer,MaxReaders) :-
+    Readers = {} &
+    WriterLockState = unlocked &
+    Writer = nullProcess &
+    MaxReaders = 1.

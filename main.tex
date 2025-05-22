@@ -1,0 +1,268 @@
+% STOLEN VERSION of ``zguide.tex''  11th December 1990
+% Copyright (C) J. M. Spivey 1990 
+
+% The zed style option and its documentation may be freely copied,
+% distributed and used for any purpose except direct commercial gain,
+% provided that they are copied and distributed as a whole and without
+% modification. The author accepts no liablility for their accuracy or
+% fitness for any purpose.
+
+\documentclass{article}
+
+\usepackage{zed-csp}
+
+\def\fuzz{{\large\it f\kern0.1em}{\normalsize\sc uzz}}
+\let\Fuzz=\fuzz
+\def\ZRM{{\rm ZRM}}
+
+\makeatletter % Oh-ho: here comes some more lark's vomit ...
+
+\def\demo{\par\vbox\bgroup\begingroup\quote}
+\def\gives{\endquote\endgroup\egroup}
+\def\enddemo{\global\@ignoretrue}
+
+% Try doing this in pure LaTeX without `visual formatting'!
+\def\symtab{\setbox0=\vbox\bgroup \def\\{\cr}
+        \halign\bgroup\strut$##$\hfil&\quad##\hfil\cr}
+\def\endsymtab{\crcr\egroup\egroup
+	\dimen0=\ht0 \divide\dimen0 by2 \advance\dimen0 by\ht\strutbox
+	\splittopskip=\ht\strutbox \vbadness=10000
+ 	\predisplaypenalty=0
+	$$\halign{##\cr\hbox to\linewidth{% 
+		\valign{##\vfil\cr
+			\setbox1=\vsplit0 to\dimen0 \unvbox1\cr 
+			\noalign{\hfil}\unvbox0\cr
+			\noalign{\hfil}}}\cr 
+		\noalign{\prevdepth=\dp\strutbox}}$$
+	\global\@ignoretrue}
+
+\makeatother % Sanity is restored
+
+\begin{document}
+
+\section{Especificación}
+\begin{zed}
+[PROCESS] \\
+\also
+state ::= locked | unlocked\\
+\also
+response ::= ok | cantBeLessThanOne | cantAllowMoreReaders \\
+| cantLockWithNullProcess | lockedByReader | errorReadNotAcquired \\
+| lockedByWriter | cantSetLessThanActualReaders \\
+| errorWriteLockedByOtherProcess | errorWriteNotLocked
+\end{zed}
+
+\begin{axdef}
+nullProcess : PROCESS
+\end{axdef}
+
+
+\begin{schema}{ReadersWriterLock}
+    readers : \power PROCESS \\
+    writerLockState : state \\
+    writer: PROCESS \\
+    maxReaders : \num
+\end{schema}
+
+\begin{schema}{InvMaxReadersPositive}
+    ReadersWriterLock
+\where
+    maxReaders > 0
+\end{schema}
+
+\begin{schema}{InvReadersLessThanMaxReaders}
+    ReadersWriterLock
+\where
+    \#readers \leq maxReaders
+\end{schema}
+
+\begin{schema}{InvNoReadersWhileWriter}
+    ReadersWriterLock
+\where
+    writerLockState = locked \implies readers = \emptyset
+\end{schema}
+
+\begin{schema}{ReadersWriterLockInit}
+    ReadersWriterLock
+\where
+    readers = \emptyset \\
+    writerLockState = unlocked \\
+    writer = nullProcess \\
+    maxReaders = 1
+\end{schema}
+\newpage
+
+-- BLOQUE SET READER MAX
+\begin{schema}{SetMaxReadersOk}
+    \Delta ReadersWriterLock \\
+    n?: \num \\
+    res!: response
+\where
+    n? \geq 1 \\
+    \#readers \leq n? \\
+    maxReaders' = n? \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{MaxReadersIncorrectValue}
+    \Xi ReadersWriterLock \\
+    n?: \num \\
+    res!: response
+\where
+    n? < 1 \\
+    res! = cantBeLessThanOne
+\end{schema}
+
+\begin{schema}{LessThanActualReaders}
+    \Xi ReadersWriterLock \\
+    n?: \num \\
+    res!: response
+\where
+    n? < \# readers \\
+    res! = cantBeLessThanActualReaders
+\end{schema}
+
+\begin{zed}
+SetMaxReadersErrors == LessThanActualReaders  \\
+\quad \lor MaxReadersIncorrectValue
+\also
+SetMaxReaders == SetMaxReadersOk \lor SetMaxReadersErrors
+\end{zed}
+
+-- ERRORES GENERICOS
+\begin{schema}{ProcessIsWriting}
+    \Xi ReadersWriterLock \\
+    res!: response
+\where
+    writerLockState = locked \\
+    res! = lockedByWriter
+\end{schema}
+
+\begin{schema}{ProcessIsReading}
+    \Xi ReadersWriterLock \\
+    res!: response
+\where
+    readers \neq \emptyset \\
+    res! = lockedByReader
+\end{schema}
+
+\begin{schema}{CantLockWithNullProcess}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    p? = nullProcess \\
+    res! = cantLockWithNullProcess
+\end{schema}
+
+-- BLOQUE ACQUIRE READ
+
+\begin{schema}{AcquireReadOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    writerLockState = unlocked \\
+    \# readers + 1 \leq maxReaders \\
+    readers' = readers \cup \{p?\} \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{MaxReadersReached}
+    \Xi ReadersWriterLock \\
+    res!: response
+\where
+    \# readers = maxReaders \\
+    res! = cantAllowMoreReaders
+\end{schema}
+
+\begin{zed}
+AcquireReadError == MaxReadersReached \lor ProcessIsWriting \\
+\quad \lor CantLockWithNullProcess
+\also
+AcquireReader == AcquireReadOk \lor AcquireReadError 
+\end{zed}
+
+-- BLOQUE ACQUIRE WRITE
+
+\begin{schema}{AcquireWriteOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    writerLockState = unlocked \\
+    readers = \emptyset \\
+    writer' = p? \\
+    writerLockState' = locked \\
+    res! = ok
+\end{schema}
+
+\begin{zed}
+AcquireWriteError == ProcessIsReading \lor ProcessIsWriting \\
+\quad \lor CantLockWithNullProcess
+\also
+AcquireWrite == AcquireWriteOk \lor AcquireWriteError 
+\end{zed}
+
+-- BLOQUE RELEASE READ
+
+\begin{schema}{ReleaseReadOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    p? \in readers \\
+    readers' = readers \setminus \{p?\} \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{ReadNotAcquired}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    p? \notin readers \\
+    res! = errorReadNotAcquired
+\end{schema}
+
+\begin{zed}
+ReleaseRead == ReleaseReadOk \lor ReadNotLocked
+\end{zed}
+
+– BLOQUE RELEASE WRITE
+
+\begin{schema}{ReleaseWriteOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    writerLockState = locked \\
+    writer = p? \\
+    writerLockState' = unlocked \\
+    writer' = nullProcess \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{WriteNotLocked}
+    \Xi ReadersWriterLock \\
+    res!: response
+\where
+    writerLockState = unlocked \\
+    res! = errorWriteNotLocked
+\end{schema}
+
+\begin{schema}{LockedByOtherProcess}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: response
+\where
+    writerLockState = locked \\
+    writer \neq p? \\
+    res! = errorWriteLockedByOtherProcess
+\end{schema}
+
+\begin{zed}
+ReleaseWriteError == WriteNotLocked \lor LockedByOtherProcess \\
+ReleaseWrite == ReleaseWriteOk \lor ReleaseWriteError
+\end{zed}
+\end{document}
