@@ -4,3 +4,18 @@ setlog.
 
 -- Como cargar la spec
 consult('reader-writer-lock.slog').
+
+-- Como cargar VCG
+vcg('reader-writer-lock.slog').
+consult('reader-writer-lock-vc.slog').
+
+-- Simulacion basica
+initial >> setMaxReaders(N:10, Res).
+
+[initial]:[invMaxReadersPositive] >> setMaxReaders(N:0, Res).
+
+[initial]:[invMaxReadersPositive] 
+>> setMaxReaders(N:20, Res) 
+>> acquireRead(P:p1, Res)
+>> acquireRead(P:p2, Res)
+>> setMaxReaders(N:1, Res).
