@@ -1,0 +1,30 @@
+[initial]:[invMaxReadersPositive, invReadersLessThanMaxReaders, invNoReadersWhileWriter] 
+>> setMaxReaders(N:0)
+>> setMaxReaders(N:2)
+>> acquireRead(P:nullProcess)
+>> acquireRead(P:p1)
+>> acquireRead(P:p2)
+>> setMaxReaders(N:1)
+>> releaseRead(P:p2)
+>> setMaxReaders(N:1)
+>> acquireRead(P:p1)
+>> acquireRead(P:p2)
+>> releaseRead(P:p1)
+>> acquireWrite(P:p1)
+>> acquireRead(P:p2)
+>> releaseWrite(P:p1).
+
+[initial]:[invMaxReadersPositive, invReadersLessThanMaxReaders, invNoReadersWhileWriter] 
+>> acquireWrite(P:p1)
+>> acquireWrite(P:p2)
+>> acquireWrite(P:p1)
+>> acquireRead(P:p2)
+>> releaseWrite(P:p1)
+>> acquireWrite(P:nullProcess)
+>> acquireRead(P:p2)
+>> acquireWrite(P:p1)
+>> releaseRead(P:p1)
+>> releaseRead(P:p2)
+>> releaseWrite(P:p1)
+>> acquireWrite(P:p1)
+>> releaseWrite(P:p2).
