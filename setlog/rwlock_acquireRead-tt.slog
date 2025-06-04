@@ -1,0 +1,107 @@
+acquireRead_ts_12(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders>_50118 &
+  dec(_50118,int) &
+  size(Readers,_50118) &
+  WriterLockState=unlocked &
+  P neq nullProcess &
+  P nin Readers &
+  Readers={} &
+  {P}neq{}.
+
+acquireRead_tc_12(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=1 &
+  Readers={} &
+  WriterLockState=unlocked &
+  P=u(processWOnull:n0).
+
+acquireRead_ts_14(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders>_50118 &
+  dec(_50118,int) &
+  size(Readers,_50118) &
+  WriterLockState=unlocked &
+  P neq nullProcess &
+  P nin Readers &
+  Readers neq {} &
+  {P}neq{} &
+  disj(Readers,{P}).
+
+acquireRead_tc_14(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=2 &
+  Readers={u(processWOnull:n1)} &
+  WriterLockState=unlocked &
+  P=u(processWOnull:n0).
+
+acquireRead_ts_26(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  subset({P},Readers) &
+  Readers neq {P}.
+
+acquireRead_tc_26(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
+
+acquireRead_ts_27(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  Readers={P}.
+
+acquireRead_tc_27(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Readers={u(processWOnull:n0)}.
+
+acquireRead_ts_31(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _50398=MaxReaders &
+  dec(_50398,int) &
+  size(Readers,_50398) &
+  MaxReaders<1.
+
+acquireRead_tc_31(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=0 &
+  Readers={}.
+
+acquireRead_ts_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _50398=MaxReaders &
+  dec(_50398,int) &
+  size(Readers,_50398) &
+  MaxReaders=1.
+
+acquireRead_tc_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=1 &
+  Readers={u(processWOnull:n0)}.
+
+acquireRead_ts_33(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _50398=MaxReaders &
+  dec(_50398,int) &
+  size(Readers,_50398) &
+  1<MaxReaders.
+
+acquireRead_tc_33(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=2 &
+  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
+
+acquireRead_ts_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=nullProcess.
+
+acquireRead_tc_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=nullProcess.
+
+acquireRead_ts_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=u(_51270) &
+  dec(_51270,processWOnull).
+
+acquireRead_tc_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=u(processWOnull:n0).
+
+acquireRead_ts_5(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess.
+
+acquireRead_tc_5(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess.
+

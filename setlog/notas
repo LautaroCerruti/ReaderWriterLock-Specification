@@ -17,10 +17,32 @@ consult('reader-writer-lock-v2-vc.slog').
 check_vcs_reader-writer-lock-v2.
 
 
--- TTF
+-- TTF SetMaxReaders
 ttf(rwlock).
-
 applydnf(setMaxReaders(N)).
+applysc(setMaxReaders_dnf_1,Readers).
+applysc(setMaxReaders_dnf_2,Readers).
+applysc(setMaxReaders_dnf_3,Readers).
+prunett.
+applyii(setMaxReaders_dnf_3,N,[1,2]).
+prunett.
+gentc.
 writett.
+writetc.
+exporttt.
 
+-- TTF acquireRead
+ttf(rwlock).
 applydnf(acquireRead(P)).
+applysp(acquireRead_dnf_1,un(Readers, {P}, Readers_)).
+prunett.
+applysp(acquireRead_dnf_2,un(Readers, {P}, Readers_)).
+prunett.
+applyii(acquireRead_dnf_3,MaxReaders,[1]).
+prunett.
+applyst(acquireRead_dnf_4,P).
+prunett.
+gentc.
+writett.
+writetc.
+exporttt.
