@@ -1,0 +1,40 @@
+releaseRead_ts_16(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  subset({P},Readers) &
+  Readers neq {P}.
+
+releaseRead_tc_16(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
+
+releaseRead_ts_17(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  Readers={P}.
+
+releaseRead_tc_17(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Readers={u(processWOnull:n0)}.
+
+releaseRead_ts_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={} &
+  {P}neq{}.
+
+releaseRead_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Readers={}.
+
+releaseRead_ts_24(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers neq {} &
+  {P}neq{} &
+  disj(Readers,{P}).
+
+releaseRead_tc_24(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Readers={u(processWOnull:n1)}.
+

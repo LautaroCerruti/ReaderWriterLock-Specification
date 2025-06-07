@@ -1,0 +1,83 @@
+acquireWrite_ts_11(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={} &
+  WriterLockState=unlocked &
+  P neq nullProcess &
+  Readers={}.
+
+acquireWrite_tc_11(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={} &
+  WriterLockState=unlocked &
+  P=u(processWOnull:n0).
+
+acquireWrite_ts_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess &
+  Readers={}.
+
+acquireWrite_tc_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess &
+  Readers={}.
+
+acquireWrite_ts_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess &
+  Readers={_72808} &
+  dec(_72808,sum([nullProcess,u(processWOnull)])).
+
+acquireWrite_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess &
+  Readers={u(processWOnull:n0)}.
+
+acquireWrite_ts_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess &
+  Readers={_72808,_72878/_72880} &
+  _72808 neq _72878 &
+  dec([_72808,_72878],sum([nullProcess,u(processWOnull)])) &
+  dec(_72880,set(sum([nullProcess,u(processWOnull)]))).
+
+acquireWrite_tc_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=nullProcess &
+  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
+
+acquireWrite_ts_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=Writer &
+  WriterLockState=locked.
+
+acquireWrite_tc_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processWOnull:n0) &
+  Writer=u(processWOnull:n0) &
+  WriterLockState=locked.
+
+acquireWrite_ts_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=nullProcess.
+
+acquireWrite_tc_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=nullProcess.
+
+acquireWrite_ts_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=u(_73130) &
+  dec(_73130,processWOnull).
+
+acquireWrite_tc_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked &
+  P=u(processWOnull:n0).
+
+acquireWrite_ts_52(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers neq {} &
+  Readers={_73206} &
+  dec(_73206,sum([nullProcess,u(processWOnull)])).
+
+acquireWrite_tc_52(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={u(processWOnull:n0)}.
+
+acquireWrite_ts_53(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers neq {} &
+  Readers={_73206,_73276/_73278} &
+  _73206 neq _73276 &
+  dec([_73206,_73276],sum([nullProcess,u(processWOnull)])) &
+  dec(_73278,set(sum([nullProcess,u(processWOnull)]))).
+
+acquireWrite_tc_53(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
+

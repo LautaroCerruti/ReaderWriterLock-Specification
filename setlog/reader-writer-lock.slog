@@ -17,7 +17,7 @@ def_type(res,enum([ok,cantBeLessThanOne,cantAllowMoreReaders,cantBeLessThanActua
 %%%%%%%%%%%%%%%%%%%%%
 invariant(invMaxReadersPositive).
 dec_p_type(invMaxReadersPositive(int)).
-invMaxReadersPositive(MaxReaders) :- MaxReaders > 0.
+invMaxReadersPositive(MaxReaders) :- MaxReaders >= 0.
 
 invariant(invReadersLessThanMaxReaders).
 dec_p_type(invReadersLessThanMaxReaders(pwrprocess,int)).
@@ -45,7 +45,7 @@ readersWriterLockInit(Readers,WriterLockState,Writer,MaxReaders) :-
 %%%%%%%%%%%%%%%%%%%%%%%%
 dec_p_type(setMaxReadersOk(pwrprocess,lockState,process,int,res,pwrprocess,lockState,process,int)).
 setMaxReadersOk(Readers,WriterLockState,Writer,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
-    N >= 1 &
+    N >= 0 &
     size(Readers, Card) & dec(Card, int) & Card =< N &
     MaxReaders_ = N &
     Res = ok & 
@@ -55,7 +55,7 @@ setMaxReadersOk(Readers,WriterLockState,Writer,N,Res,Readers_,WriterLockState_,W
 
 dec_p_type(maxReadersIncorrectValue(pwrprocess,lockState,process,int,int,res,pwrprocess,lockState,process,int)).
 maxReadersIncorrectValue(Readers,WriterLockState,Writer,MaxReaders,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
-    N < 1 &
+    N < 0 &
     Res = cantBeLessThanOne &
     MaxReaders_ = MaxReaders &
     Readers_ = Readers &
@@ -148,13 +148,13 @@ dec_p_type(acquireRead(pwrprocess,lockState,process,int,process,res,pwrprocess,l
 acquireRead(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
     acquireReadOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
-    alreadyLockedRead(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
-    or
-    maxReadersReached(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    cantLockWithNullProcessError(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
     processIsWriting(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
-    cantLockWithNullProcessError(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
+    alreadyLockedRead(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    or
+    maxReadersReached(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
 
 %%%%%%%%%%%%%%%%%%%%%%%
 % -- Acquire Write -- %
@@ -185,13 +185,13 @@ dec_p_type(acquireWrite(pwrprocess,lockState,process,int,process,res,pwrprocess,
 acquireWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
     acquireWriteOk(Readers,WriterLockState,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
-    alreadyLockedWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    cantLockWithNullProcessError(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
-    processIsReading(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
+    alreadyLockedWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
     processIsWriting(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
-    cantLockWithNullProcessError(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
+    processIsReading(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
 
 %%%%%%%%%%%%%%%%%%%%%%
 % -- Release Read -- %
