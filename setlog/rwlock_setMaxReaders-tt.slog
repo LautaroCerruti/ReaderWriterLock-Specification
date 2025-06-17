@@ -1,7 +1,7 @@
 setMaxReaders_ts_11(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N>=_51858 &
-  dec(_51858,int) &
-  size(Readers,_51858) &
+  N>=_192050 &
+  dec(_192050,int) &
+  size(Readers,_192050) &
   N>=0 &
   Readers={}.
 
@@ -10,26 +10,26 @@ setMaxReaders_tc_11(N,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={}.
 
 setMaxReaders_ts_12(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N>=_51858 &
-  dec(_51858,int) &
-  size(Readers,_51858) &
+  N>=_192050 &
+  dec(_192050,int) &
+  size(Readers,_192050) &
   N>=0 &
-  Readers={_52354} &
-  dec(_52354,sum([nullProcess,u(processWOnull)])).
+  Readers={_192546} &
+  dec(_192546,sum([nullProcess,u(processWOnull)])).
 
 setMaxReaders_tc_12(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=1 &
   Readers={u(processWOnull:n0)}.
 
 setMaxReaders_ts_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N>=_51858 &
-  dec(_51858,int) &
-  size(Readers,_51858) &
+  N>=_192050 &
+  dec(_192050,int) &
+  size(Readers,_192050) &
   N>=0 &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))).
+  Readers={_192546,_192616/_192618} &
+  _192546 neq _192616 &
+  dec([_192546,_192616],sum([nullProcess,u(processWOnull)])) &
+  dec(_192618,set(sum([nullProcess,u(processWOnull)]))).
 
 setMaxReaders_tc_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=2 &
@@ -37,135 +37,74 @@ setMaxReaders_tc_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
 
 setMaxReaders_ts_21(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N<0 &
-  Readers={}.
+  N< -2.
 
 setMaxReaders_tc_21(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N= -1 &
-  Readers={}.
+  N= -3.
 
 setMaxReaders_ts_22(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N<0 &
-  Readers={_52354} &
-  dec(_52354,sum([nullProcess,u(processWOnull)])).
+  N= -2.
 
 setMaxReaders_tc_22(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N= -1 &
-  Readers={u(processWOnull:n0)}.
+  N= -2.
 
 setMaxReaders_ts_23(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N<0 &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))).
-
-setMaxReaders_tc_23(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N= -1 &
-  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
-
-setMaxReaders_ts_311(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={} &
+  -2<N &
   N<0.
 
-setMaxReaders_tc_311(N,Readers,WriterLockState,Writer,MaxReaders) :-
+setMaxReaders_tc_23(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N= -1.
+
+setMaxReaders_ts_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _192304>N &
+  dec(_192304,int) &
+  size(Readers,_192304) &
+  N<0.
+
+setMaxReaders_tc_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N= -1 &
   Readers={}.
 
-setMaxReaders_ts_321(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354} &
-  dec(_52354,sum([nullProcess,u(processWOnull)])) &
-  N<0.
-
-setMaxReaders_tc_321(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N= -1 &
-  Readers={u(processWOnull:n0)}.
-
-setMaxReaders_ts_322(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354} &
-  dec(_52354,sum([nullProcess,u(processWOnull)])) &
+setMaxReaders_ts_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _192304>N &
+  dec(_192304,int) &
+  size(Readers,_192304) &
   N=0.
 
-setMaxReaders_tc_322(N,Readers,WriterLockState,Writer,MaxReaders) :-
+setMaxReaders_tc_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=0 &
   Readers={u(processWOnull:n0)}.
 
-setMaxReaders_ts_331(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))) &
-  N<0.
-
-setMaxReaders_tc_331(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N= -1 &
-  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
-
-setMaxReaders_ts_332(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))) &
-  N=0.
-
-setMaxReaders_tc_332(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N=0 &
-  Readers={u(processWOnull:n0),u(processWOnull:n1)}.
-
-setMaxReaders_ts_333(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))) &
+setMaxReaders_ts_33(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _192304>N &
+  dec(_192304,int) &
+  size(Readers,_192304) &
   0<N &
   N<2.
 
-setMaxReaders_tc_333(N,Readers,WriterLockState,Writer,MaxReaders) :-
+setMaxReaders_tc_33(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=1 &
   Readers={u(processWOnull:n0),u(processWOnull:n1)}.
 
-setMaxReaders_ts_334(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))) &
+setMaxReaders_ts_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _192304>N &
+  dec(_192304,int) &
+  size(Readers,_192304) &
   N=2.
 
-setMaxReaders_tc_334(N,Readers,WriterLockState,Writer,MaxReaders) :-
+setMaxReaders_tc_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=2 &
-  Readers={u(processWOnull:n0),u(processWOnull:n2),u(processWOnull:n1)}.
+  Readers={u(processWOnull:n0),u(processWOnull:n1),u(processWOnull:n2)}.
 
-setMaxReaders_ts_335(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _52112>N &
-  dec(_52112,int) &
-  size(Readers,_52112) &
-  Readers={_52354,_52424/_52426} &
-  _52354 neq _52424 &
-  dec([_52354,_52424],sum([nullProcess,u(processWOnull)])) &
-  dec(_52426,set(sum([nullProcess,u(processWOnull)]))) &
+setMaxReaders_ts_35(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _192304>N &
+  dec(_192304,int) &
+  size(Readers,_192304) &
   2<N.
 
-setMaxReaders_tc_335(N,Readers,WriterLockState,Writer,MaxReaders) :-
+setMaxReaders_tc_35(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=3 &
-  Readers={u(processWOnull:n0),u(processWOnull:n3),u(processWOnull:n1),u(processWOnull:n2)}.
+  Readers={u(processWOnull:n0),u(processWOnull:n1),u(processWOnull:n2),u(processWOnull:n3)}.
 
