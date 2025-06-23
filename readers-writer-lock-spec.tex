@@ -1,0 +1,241 @@
+\documentclass{article}
+\usepackage{fuzz}
+\begin{document}
+\begin{zed}
+[PROCESS] \\
+\also
+STATE ::= locked | unlocked\\
+\also
+RESPONSE ::= ok | cantBeLessThanOne | cantAllowMoreReaders \\
+| cantLockWithNullProcess | lockedByReader | errorReadNotAcquired \\
+| lockedByWriter | cantBeLessThanActualReaders \\
+| errorWriteLockedByOtherProcess | errorWriteNotLocked | alreadyAcquired
+\end{zed}
+
+\begin{axdef}
+nullProcess : PROCESS
+\end{axdef}
+
+\begin{schema}{ReadersWriterLock}
+    readers : \power PROCESS \\
+    writerLockState : STATE \\
+    writer: PROCESS \\
+    maxReaders : \num
+\end{schema}
+
+\begin{schema}{ReadersWriterLockInit}
+    ReadersWriterLock
+\where
+    readers = \emptyset \\
+    writerLockState = unlocked \\
+    writer = nullProcess \\
+    maxReaders = 1
+\end{schema}
+
+Vamos a definir tres invariantes. 
+
+
+\begin{schema}{InvMaxReadersPositive}
+    ReadersWriterLock
+\where
+    maxReaders > 0
+\end{schema}
+
+\begin{schema}{InvReadersLessThanMaxReaders}
+    ReadersWriterLock
+\where
+    \#readers \leq maxReaders
+\end{schema}
+
+\begin{schema}{InvNoReadersWhileWriter}
+    ReadersWriterLock
+\where
+    writerLockState = locked \implies readers = \emptyset
+\end{schema}
+
+\begin{schema}{SetMaxReadersOk}
+    \Delta ReadersWriterLock \\
+    n?: \num \\
+    res!: RESPONSE
+\where
+    n? > 0 \\
+    \#readers \leq n? \\
+    maxReaders' = n? \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{MaxReadersIncorrectValue}
+    \Xi ReadersWriterLock \\
+    n?: \num \\
+    res!: RESPONSE
+\where
+    n? \leq 0 \\
+    res! = cantBeLessThanOne
+\end{schema}
+
+\begin{schema}{LessThanActualReaders}
+    \Xi ReadersWriterLock \\
+    n?: \num \\
+    res!: RESPONSE
+\where
+    n? < \# readers \\
+    res! = cantBeLessThanActualReaders
+\end{schema}
+
+\begin{zed}
+SetMaxReadersErrors \defs MaxReadersIncorrectValue  \\
+\quad \lor LessThanActualReaders
+\also
+SetMaxReaders \defs SetMaxReadersOk \lor SetMaxReadersErrors
+\end{zed}
+
+\begin{schema}{ProcessIsWriting}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    res! = lockedByWriter
+\end{schema}
+
+\begin{schema}{ProcessIsReading}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    readers \neq \emptyset \\
+    res! = lockedByReader
+\end{schema}
+
+\begin{schema}{CantLockWithNullProcess}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? = nullProcess \\
+    res! = cantLockWithNullProcess
+\end{schema}
+
+\begin{schema}{AcquireReadOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \notin readers \\
+    p? \neq nullProcess \\
+    writerLockState = unlocked \\
+    \# readers < maxReaders \\
+    readers' = readers \cup \{p?\} \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{AlreadyLockedRead}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \in readers \\
+    res! = alreadyAcquired
+\end{schema}
+
+\begin{schema}{MaxReadersReached}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    \# readers = maxReaders \\
+    res! = cantAllowMoreReaders
+\end{schema}
+
+\begin{zed}
+AcquireReadError \defs CantLockWithNullProcess \\ \quad \lor AlreadyLockedRead \lor ProcessIsWriting \lor MaxReadersReached  
+\also
+AcquireRead \defs AcquireReadOk \lor AcquireReadError 
+\end{zed}
+
+\begin{schema}{AcquireWriteOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \neq nullProcess \\
+    writerLockState = unlocked \\
+    readers = \emptyset \\
+    writer' = p? \\
+    writerLockState' = locked \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{AlreadyLockedWrite}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    p? = writer \\
+    res! = alreadyAcquired
+\end{schema}
+
+\begin{zed}
+AcquireWriteError \defs CantLockWithNullProcess  \\ \quad \lor AlreadyLockedWrite \lor ProcessIsWriting \lor ProcessIsReading 
+\also
+AcquireWrite \defs AcquireWriteOk \lor AcquireWriteError 
+\end{zed}
+
+\begin{schema}{ReleaseReadOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \in readers \\
+    readers' = readers \setminus \{p?\} \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{ReadNotAcquired}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \notin readers \\
+    res! = errorReadNotAcquired
+\end{schema}
+
+\begin{zed}
+ReleaseRead \defs ReleaseReadOk \lor ReadNotAcquired
+\end{zed}
+
+\begin{schema}{ReleaseWriteOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    writer = p? \\
+    writerLockState' = unlocked \\
+    writer' = nullProcess \\
+    res! = ok
+\end{schema}
+
+\begin{schema}{WriteNotLocked}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    writerLockState = unlocked \\
+    res! = errorWriteNotLocked
+\end{schema}
+
+
+\begin{schema}{LockedByOtherProcess}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    writer \neq p? \\
+    res! = errorWriteLockedByOtherProcess
+\end{schema}
+
+\begin{zed}
+ReleaseWriteError \defs WriteNotLocked \lor LockedByOtherProcess 
+\also
+ReleaseWrite \defs ReleaseWriteOk \lor ReleaseWriteError
+\end{zed}
+\end{document}

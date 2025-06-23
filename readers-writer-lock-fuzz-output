@@ -1,0 +1,412 @@
+Fuzz with -t:
+Given PROCESS
+
+Given STATE
+
+Var locked: STATE
+
+Var unlocked: STATE
+
+Given RESPONSE
+
+Var ok: RESPONSE
+
+Var cantBeLessThanOne: RESPONSE
+
+Var cantAllowMoreReaders: RESPONSE
+
+Var cantLockWithNullProcess: RESPONSE
+
+Var lockedByReader: RESPONSE
+
+Var errorReadNotAcquired: RESPONSE
+
+Var lockedByWriter: RESPONSE
+
+Var cantBeLessThanActualReaders: RESPONSE
+
+Var errorWriteLockedByOtherProcess: RESPONSE
+
+Var errorWriteNotLocked: RESPONSE
+
+Var alreadyAcquired: RESPONSE
+
+Var nullProcess: PROCESS
+
+Schema ReadersWriterLock
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+End
+
+Schema ReadersWriterLockInit
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+End
+
+Schema InvMaxReadersPositive
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+End
+
+Schema InvReadersLessThanMaxReaders
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+End
+
+Schema InvNoReadersWhileWriter
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+End
+
+Schema \Delta ReadersWriterLock
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+End
+
+Schema SetMaxReadersOk
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    n?: ZZ
+    res!: RESPONSE
+End
+
+Schema \Xi ReadersWriterLock
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+End
+
+Schema MaxReadersIncorrectValue
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    n?: ZZ
+    res!: RESPONSE
+End
+
+Schema LessThanActualReaders
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    n?: ZZ
+    res!: RESPONSE
+End
+
+Schema SetMaxReadersErrors
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    n?: ZZ
+    res!: RESPONSE
+End
+
+Schema SetMaxReaders
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    n?: ZZ
+    res!: RESPONSE
+End
+
+Schema ProcessIsWriting
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    res!: RESPONSE
+End
+
+Schema ProcessIsReading
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    res!: RESPONSE
+End
+
+Schema CantLockWithNullProcess
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AcquireReadOk
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AlreadyLockedRead
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema MaxReadersReached
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    res!: RESPONSE
+End
+
+Schema AcquireReadError
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AcquireRead
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AcquireWriteOk
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AlreadyLockedWrite
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AcquireWriteError
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema AcquireWrite
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ReleaseReadOk
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ReadNotAcquired
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ReleaseRead
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ReleaseWriteOk
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema WriteNotLocked
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    res!: RESPONSE
+End
+
+Schema LockedByOtherProcess
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ReleaseWriteError
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ReleaseWrite
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
