@@ -7,7 +7,6 @@ variables([Readers,WriterLockState,Writer,MaxReaders]).
 % -- Tipos -- %
 %%%%%%%%%%%%%%%
 def_type(process,sum([nullProcess,u(processWOnull)])).
-
 def_type(pwrprocess,set(process)).
 def_type(lockState,enum([locked,unlocked])).
 def_type(res,enum([ok,cantBeLessThanOne,cantAllowMoreReaders,cantBeLessThanActualReaders,lockedByWriter,lockedByReader,cantLockWithNullProcess,errorReadNotAcquired,errorWriteNotLocked,errorWriteLockedByOtherProcess,alreadyAcquired])).
@@ -17,7 +16,7 @@ def_type(res,enum([ok,cantBeLessThanOne,cantAllowMoreReaders,cantBeLessThanActua
 %%%%%%%%%%%%%%%%%%%%%
 invariant(invMaxReadersPositive).
 dec_p_type(invMaxReadersPositive(int)).
-invMaxReadersPositive(MaxReaders) :- MaxReaders >= 0.
+invMaxReadersPositive(MaxReaders) :- MaxReaders > 0.
 
 invariant(invReadersLessThanMaxReaders).
 dec_p_type(invReadersLessThanMaxReaders(pwrprocess,int)).
@@ -45,7 +44,7 @@ readersWriterLockInit(Readers,WriterLockState,Writer,MaxReaders) :-
 %%%%%%%%%%%%%%%%%%%%%%%%
 dec_p_type(setMaxReadersOk(pwrprocess,lockState,process,int,res,pwrprocess,lockState,process,int)).
 setMaxReadersOk(Readers,WriterLockState,Writer,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
-    N >= 0 &
+    N > 0 &
     size(Readers, Card) & dec(Card, int) & Card =< N &
     MaxReaders_ = N &
     Res = ok & 
@@ -55,7 +54,7 @@ setMaxReadersOk(Readers,WriterLockState,Writer,N,Res,Readers_,WriterLockState_,W
 
 dec_p_type(maxReadersIncorrectValue(pwrprocess,lockState,process,int,int,res,pwrprocess,lockState,process,int)).
 maxReadersIncorrectValue(Readers,WriterLockState,Writer,MaxReaders,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
-    N < 0 &
+    N =< 0 &
     Res = cantBeLessThanOne &
     MaxReaders_ = MaxReaders &
     Readers_ = Readers &

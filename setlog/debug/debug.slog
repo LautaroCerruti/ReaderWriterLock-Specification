@@ -1,0 +1,131 @@
+%%%%%%%%%%%%%%%%
+% -- Estado -- %
+%%%%%%%%%%%%%%%%
+variables([Conjunto, Estado]).
+
+%%%%%%%%%%%%%%%
+% -- Tipos -- %
+%%%%%%%%%%%%%%%
+def_type(elemset,set(elem)).
+def_type(state,enum([open,closed])).
+def_type(res,enum([ok,alreadyOpened,conjuntoNotEmpty,alreadyClosed,errorClosed])).
+
+invariant(closedImpliesEmpty).
+dec_p_type(closedImpliesEmpty(state,elemset)).
+closedImpliesEmpty(Estado, Conjunto) :- 
+    Estado = closed implies Conjunto = {}.
+
+invariant(notEmptyImpliesOpen).
+dec_p_type(notEmptyImpliesOpen(state,elemset)).
+notEmptyImpliesOpen(Estado, Conjunto) :- 
+    Conjunto neq {} implies Estado = open.
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% -- Estado Inicial -- %
+%%%%%%%%%%%%%%%%%%%%%%%%
+initial(initialState).
+dec_p_type(initialState(state,elemset)).
+initialState(Estado, Conjunto) :-
+    Estado = open &
+    Conjunto = {}.
+
+%%%%%%%%%%%%%%
+% -- Open -- %
+%%%%%%%%%%%%%%
+dec_p_type(openOk(state,elemset,res,state,elemset)).
+openOk(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    Estado = closed &
+    Estado_ = open &
+    Res = ok &
+    Conjunto_ = Conjunto.
+
+dec_p_type(erroraAlreadyOpened(state,elemset,res,state,elemset)).
+erroraAlreadyOpened(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    Estado = open &
+    Res = alreadyOpened &
+    Estado_ = Estado &
+    Conjunto_ = Conjunto.
+
+operation(openOp).
+dec_p_type(openOp(state,elemset,res,state,elemset)).
+openOp(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    openOk(Estado,Conjunto,Res,Estado_,Conjunto_)
+    or
+    erroraAlreadyOpened(Estado,Conjunto,Res,Estado_,Conjunto_).
+
+
+%%%%%%%%%%%%%%%
+% -- Close -- %
+%%%%%%%%%%%%%%%
+dec_p_type(closeOk(state,elemset,res,state,elemset)).
+closeOk(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    Conjunto = {} &
+    Estado = open &
+    Estado_ = closed &
+    Res = ok &
+    Conjunto_ = Conjunto.
+
+dec_p_type(erroraAlreadyClosed(state,elemset,res,state,elemset)).
+erroraAlreadyClosed(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    Estado = closed &
+    Res = alreadyClosed &
+    Estado_ = Estado &
+    Conjunto_ = Conjunto.
+
+dec_p_type(errorConjuntoNotEmpty(state,elemset,res,state,elemset)).
+errorConjuntoNotEmpty(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    Conjunto neq {} &
+    Res = conjuntoNotEmpty &
+    Estado_ = Estado &
+    Conjunto_ = Conjunto.
+
+operation(closeOp).
+dec_p_type(closeOp(state,elemset,res,state,elemset)).
+closeOp(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    closeOk(Estado,Conjunto,Res,Estado_,Conjunto_)
+    or
+    erroraAlreadyClosed(Estado,Conjunto,Res,Estado_,Conjunto_)
+    or
+    errorConjuntoNotEmpty(Estado,Conjunto,Res,Estado_,Conjunto_).
+
+
+%%%%%%%%%%%%%
+% -- Add -- %
+%%%%%%%%%%%%%
+dec_p_type(addOk(state,elemset,elem,res,state,elemset)).
+addOk(Estado,Conjunto,Elem,Res,Estado_,Conjunto_) :-
+    Estado = open &
+    un(Conjunto, {Elem}, Conjunto_) &
+    Res = ok &
+    Estado_ = Estado.
+
+dec_p_type(stateClosed(state,elemset,res,state,elemset)).
+stateClosed(Estado,Conjunto,Res,Estado_,Conjunto_) :-
+    Estado = closed &
+    Res = errorClosed &
+    Estado_ = Estado &
+    Conjunto_ = Conjunto.
+
+operation(add).
+dec_p_type(add(state,elemset,elem,res,state,elemset)).
+add(Estado,Conjunto,Elem,Res,Estado_,Conjunto_) :-
+    addOk(Estado,Conjunto,Elem,Res,Estado_,Conjunto_)
+    or
+    stateClosed(Estado,Conjunto,Res,Estado_,Conjunto_).
+
+%%%%%%%%%%%%%
+% -- Remove -- %
+%%%%%%%%%%%%%
+dec_p_type(removeOk(state,elemset,elem,res,state,elemset)).
+removeOk(Estado,Conjunto,Elem,Res,Estado_,Conjunto_) :-
+    Estado = open &
+    diff(Conjunto, {Elem}, Conjunto_) &
+    Res = ok &
+    Estado_ = Estado.
+
+operation(remove).
+dec_p_type(remove(state,elemset,elem,res,state,elemset)).
+remove(Estado,Conjunto,Elem,Res,Estado_,Conjunto_) :-
+    removeOk(Estado,Conjunto,Elem,Res,Estado_,Conjunto_)
+    or
+    stateClosed(Estado,Conjunto,Res,Estado_,Conjunto_).

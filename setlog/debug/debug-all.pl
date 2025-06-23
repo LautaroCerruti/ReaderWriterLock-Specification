@@ -1,0 +1,12 @@
+dvariables(['Conjunto'=Conjunto,'Estado'=Estado]).
+dinvariant(closedImpliesEmpty,closedImpliesEmpty(Estado,Conjunto)).
+dinvariant(notEmptyImpliesOpen,notEmptyImpliesOpen(Estado,Conjunto)).
+dinitial(initialState(Estado,Conjunto)).
+all_unsat_vc(openOp_pi_closedImpliesEmpty,inv,closedImpliesEmpty,openOp_pi_closedImpliesEmpty(Estado,Conjunto,Estado,Conjunto,Res,Estado_,Conjunto_),openOp(Estado,Conjunto,Res,Estado_,Conjunto_)).
+all_unsat_vc(openOp_pi_notEmptyImpliesOpen,inv,notEmptyImpliesOpen,openOp_pi_notEmptyImpliesOpen(Estado,Conjunto,Estado,Conjunto,Res,Estado_,Conjunto_),openOp(Estado,Conjunto,Res,Estado_,Conjunto_)).
+all_unsat_vc(closeOp_pi_closedImpliesEmpty,inv,closedImpliesEmpty,closeOp_pi_closedImpliesEmpty(Estado,Conjunto,Estado,Conjunto,Res,Estado_,Conjunto_),closeOp(Estado,Conjunto,Res,Estado_,Conjunto_)).
+all_unsat_vc(closeOp_pi_notEmptyImpliesOpen,inv,notEmptyImpliesOpen,closeOp_pi_notEmptyImpliesOpen(Estado,Conjunto,Estado,Conjunto,Res,Estado_,Conjunto_),closeOp(Estado,Conjunto,Res,Estado_,Conjunto_)).
+all_unsat_vc(add_pi_closedImpliesEmpty,inv,closedImpliesEmpty,add_pi_closedImpliesEmpty(Estado,Conjunto,Estado,Conjunto,Elem,Res,Estado_,Conjunto_),add(Estado,Conjunto,Elem,Res,Estado_,Conjunto_)).
+all_unsat_vc(add_pi_notEmptyImpliesOpen,inv,notEmptyImpliesOpen,add_pi_notEmptyImpliesOpen(Estado,Conjunto,Estado,Conjunto,Elem,Res,Estado_,Conjunto_),add(Estado,Conjunto,Elem,Res,Estado_,Conjunto_)).
+all_unsat_vc(remove_pi_closedImpliesEmpty,inv,closedImpliesEmpty,remove_pi_closedImpliesEmpty(Estado,Conjunto,Estado,Conjunto,Elem,Res,Estado_,Conjunto_),remove(Estado,Conjunto,Elem,Res,Estado_,Conjunto_)).
+all_unsat_vc(remove_pi_notEmptyImpliesOpen,inv,notEmptyImpliesOpen,remove_pi_notEmptyImpliesOpen(Estado,Conjunto,Estado,Conjunto,Elem,Res,Estado_,Conjunto_),remove(Estado,Conjunto,Elem,Res,Estado_,Conjunto_)).

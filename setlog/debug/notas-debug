@@ -1,0 +1,20 @@
+-- Como correr setlog
+consult('setlog.pl').
+setlog.
+
+-- Como cargar la spec
+type_check.
+consult('debug.slog').
+vcg('debug.slog').
+consult('debug-vc.slog').
+check_vcs_debug.
+
+-- TTF add
+ttf(debug).
+applydnf(add(Elem)).
+applysp(add_vis,un(Conjunto, {Elem}, Conjunto_)).
+prunett.
+gentc.
+writett.
+writetc.
+exporttt.

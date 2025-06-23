@@ -9,14 +9,6 @@ vcg('reader-writer-lock.slog').
 consult('reader-writer-lock-vc.slog').
 check_vcs_reader-writer-lock.
 
--- Version 2
-type_check.
-consult('reader-writer-lock-v2.slog').
-vcg('reader-writer-lock-v2.slog').
-consult('reader-writer-lock-v2-vc.slog').
-check_vcs_reader-writer-lock-v2.
-
-
 -- TTF SetMaxReaders
 ttf(rwlock).
 applydnf(setMaxReaders(N)).

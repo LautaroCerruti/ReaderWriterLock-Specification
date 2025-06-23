@@ -1,3 +1,22 @@
+-- Simulacion normal
+[initial]:[invMaxReadersPositive, invReadersLessThanMaxReaders, invNoReadersWhileWriter] 
+>> setMaxReaders(N:2)
+>> acquireRead(P:p1)
+>> acquireRead(P:p2)
+>> acquireRead(P:p3)
+>> acquireWrite(P:p3)
+>> releaseRead(P:p1)
+>> acquireRead(P:p1)
+>> releaseRead(P:p1)
+>> releaseRead(P:p2)
+>> acquireWrite(P:p3)
+>> acquireWrite(P:p2)
+>> acquireRead(P:p1)
+>> releaseWrite(P:p3).
+
+
+
+-- Viejas
 [initial]:[invMaxReadersPositive, invReadersLessThanMaxReaders, invNoReadersWhileWriter] 
 >> setMaxReaders(N:0)
 >> setMaxReaders(N:2)

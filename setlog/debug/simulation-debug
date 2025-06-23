@@ -1,0 +1,18 @@
+% Simulaciones Correctas
+[initial]
+>> addSet(E:e1)
+>> removeSet(E:e1).
+
+[initial]
+>> removeSet(E:e2).
+
+% Simulaciones Erroneas
+[initial]
+>> addSet(E:e1)
+>> addSet(E:e2)
+>> removeSet(E:e2).
+
+[initial]
+>> addSet(E:e1)
+>> addSet(E:e2)
+>> removeSet(E:e3).
