@@ -14,9 +14,9 @@ ttf(rwlock).
 applydnf(setMaxReaders(N)).
 applysc(setMaxReaders_dnf_1,Readers).
 prunett.
-applyii(setMaxReaders_dnf_2,N,[-2,0]).
+applyii(setMaxReaders_dnf_2,N,[-1,0]).
 prunett.
-applyii(setMaxReaders_dnf_3,N,[0,2]).
+applyii(setMaxReaders_dnf_3,N,[2,3]).
 prunett.
 gentc.
 writett.
@@ -28,11 +28,9 @@ ttf(rwlock).
 applydnf(acquireRead(P)).
 applysp(acquireRead_dnf_1,un(Readers, {P}, Readers_)).
 prunett.
-applysc(acquireRead_dnf_2,Readers).
-prunett.
 applysc(acquireRead_dnf_4,Readers).
 prunett.
-applysc(acquireRead_dnf_5,Readers).
+applyii(acquireRead_dnf_5,MaxReaders,[1,2,3]).
 prunett.
 gentc.
 writett.
