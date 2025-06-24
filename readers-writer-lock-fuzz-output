@@ -1,4 +1,3 @@
-Fuzz with -t:
 Given PROCESS
 
 Given STATE
@@ -15,23 +14,21 @@ Var cantBeLessThanOne: RESPONSE
 
 Var cantAllowMoreReaders: RESPONSE
 
-Var cantLockWithNullProcess: RESPONSE
-
 Var lockedByReader: RESPONSE
 
 Var errorReadNotAcquired: RESPONSE
 
-Var lockedByWriter: RESPONSE
-
 Var cantBeLessThanActualReaders: RESPONSE
 
-Var errorWriteLockedByOtherProcess: RESPONSE
+Var writeLockedByOtherProcess: RESPONSE
 
 Var errorWriteNotLocked: RESPONSE
 
 Var alreadyAcquired: RESPONSE
 
-Var nullProcess: PROCESS
+Var lockedByWriter: RESPONSE
+
+Var creatorProcess: PROCESS
 
 Schema ReadersWriterLock
     readers: P PROCESS
@@ -155,43 +152,6 @@ Schema SetMaxReaders
     res!: RESPONSE
 End
 
-Schema ProcessIsWriting
-    readers: P PROCESS
-    writerLockState: STATE
-    writer: PROCESS
-    maxReaders: ZZ
-    readers': P PROCESS
-    writerLockState': STATE
-    writer': PROCESS
-    maxReaders': ZZ
-    res!: RESPONSE
-End
-
-Schema ProcessIsReading
-    readers: P PROCESS
-    writerLockState: STATE
-    writer: PROCESS
-    maxReaders: ZZ
-    readers': P PROCESS
-    writerLockState': STATE
-    writer': PROCESS
-    maxReaders': ZZ
-    res!: RESPONSE
-End
-
-Schema CantLockWithNullProcess
-    readers: P PROCESS
-    writerLockState: STATE
-    writer: PROCESS
-    maxReaders: ZZ
-    readers': P PROCESS
-    writerLockState': STATE
-    writer': PROCESS
-    maxReaders': ZZ
-    p?: PROCESS
-    res!: RESPONSE
-End
-
 Schema AcquireReadOk
     readers: P PROCESS
     writerLockState: STATE
@@ -215,6 +175,18 @@ Schema AlreadyLockedRead
     writer': PROCESS
     maxReaders': ZZ
     p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ProcessIsWriting
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
     res!: RESPONSE
 End
 
@@ -279,6 +251,31 @@ Schema AlreadyLockedWrite
     writer': PROCESS
     maxReaders': ZZ
     p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ErrorWriteLockedByOtherProcess
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
+    p?: PROCESS
+    res!: RESPONSE
+End
+
+Schema ProcessIsReading
+    readers: P PROCESS
+    writerLockState: STATE
+    writer: PROCESS
+    maxReaders: ZZ
+    readers': P PROCESS
+    writerLockState': STATE
+    writer': PROCESS
+    maxReaders': ZZ
     res!: RESPONSE
 End
 
@@ -369,19 +366,6 @@ Schema WriteNotLocked
     writerLockState': STATE
     writer': PROCESS
     maxReaders': ZZ
-    res!: RESPONSE
-End
-
-Schema LockedByOtherProcess
-    readers: P PROCESS
-    writerLockState: STATE
-    writer: PROCESS
-    maxReaders: ZZ
-    readers': P PROCESS
-    writerLockState': STATE
-    writer': PROCESS
-    maxReaders': ZZ
-    p?: PROCESS
     res!: RESPONSE
 End
 

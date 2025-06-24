@@ -4,10 +4,10 @@ setlog.
 
 -- Como cargar la spec
 type_check.
-consult('reader-writer-lock.slog').
-vcg('reader-writer-lock.slog').
-consult('reader-writer-lock-vc.slog').
-check_vcs_reader-writer-lock.
+consult('reader-writer-lock-v1.slog').
+vcg('reader-writer-lock-v1.slog').
+consult('reader-writer-lock-v1-vc.slog').
+check_vcs_reader-writer-lock-v1.
 
 -- TTF SetMaxReaders
 ttf(rwlock).
