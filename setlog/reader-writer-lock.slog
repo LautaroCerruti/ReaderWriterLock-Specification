@@ -6,7 +6,7 @@ variables([Readers,WriterLockState,Writer,MaxReaders]).
 %%%%%%%%%%%%%%%
 % -- Tipos -- %
 %%%%%%%%%%%%%%%
-def_type(process,sum([creatorProcess,u(processWithoutCreator)])).
+def_type(process,sum([creatorProcess,u(processPrevAxiom)])).
 def_type(pwrprocess,set(process)).
 def_type(lockState,enum([locked,unlocked])).
 def_type(res,enum([ok,cantBeLessThanOne,cantAllowMoreReaders,cantBeLessThanActualReaders,lockedByWriter,lockedByReader,errorReadNotAcquired,errorWriteNotLocked,writeLockedByOtherProcess,alreadyAcquired])).
@@ -78,19 +78,6 @@ setMaxReaders(Readers,WriterLockState,Writer,MaxReaders,N,Res,Readers_,WriterLoc
     maxReadersIncorrectValue(Readers,WriterLockState,Writer,MaxReaders,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_)
     or
     lessThanActualReaders(Readers,WriterLockState,Writer,MaxReaders,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_).
-
-%%%%%%%%%%%%%%%%
-% -- Common -- %
-%%%%%%%%%%%%%%%%
-dec_p_type(errorWriteLockedByOtherProcess(pwrprocess,lockState,process,int,process,res,pwrprocess,lockState,process,int)).
-errorWriteLockedByOtherProcess(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
-    WriterLockState = locked &
-    Writer neq P &
-    Res = writeLockedByOtherProcess &
-    MaxReaders_ = MaxReaders &
-    Readers_ = Readers &
-    Writer_ = Writer &
-    WriterLockState_ = WriterLockState.
 
 %%%%%%%%%%%%%%%%%%%%%%
 % -- Acquire Read -- %
@@ -166,6 +153,16 @@ alreadyLockedWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,Writ
     Writer_ = Writer &
     WriterLockState_ = WriterLockState &
     MaxReaders_ = MaxReaders.
+
+dec_p_type(errorWriteLockedByOtherProcess(pwrprocess,lockState,process,int,process,res,pwrprocess,lockState,process,int)).
+errorWriteLockedByOtherProcess(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
+    WriterLockState = locked &
+    Writer neq P &
+    Res = writeLockedByOtherProcess &
+    MaxReaders_ = MaxReaders &
+    Readers_ = Readers &
+    Writer_ = Writer &
+    WriterLockState_ = WriterLockState.
 
 dec_p_type(processIsReading(pwrprocess,lockState,process,int,res,pwrprocess,lockState,process,int)).
 processIsReading(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-

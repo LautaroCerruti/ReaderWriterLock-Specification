@@ -28,9 +28,9 @@ ttf(rwlock).
 applydnf(acquireRead(P)).
 applysp(acquireRead_dnf_1,un(Readers, {P}, Readers_)).
 prunett.
-applysc(acquireRead_dnf_4,Readers).
+applysc(acquireRead_dnf_3,Readers).
 prunett.
-applyii(acquireRead_dnf_5,MaxReaders,[1,2,3]).
+applyii(acquireRead_dnf_4,MaxReaders,[1,2,3]).
 prunett.
 gentc.
 writett.
@@ -42,7 +42,7 @@ ttf(rwlock).
 applydnf(acquireWrite(P)).
 applysc(acquireWrite_dnf_1,Readers).
 prunett.
-applysc(acquireWrite_dnf_5,Readers).
+applysc(acquireWrite_dnf_4,Readers).
 prunett.
 gentc.
 writett.
@@ -52,9 +52,9 @@ exporttt.
 -- TTF releaseRead
 ttf(rwlock).
 applydnf(releaseRead(P)).
-applysp(releaseRead_vis,diff(Readers, {P}, Readers_)).
+applysp(releaseRead_dnf_1,diff(Readers, {P}, Readers_)).
 prunett.
-applyst(releaseRead_dnf_2,P).
+applysc(releaseRead_dnf_2,Readers).
 prunett.
 gentc.
 writett.
@@ -65,10 +65,6 @@ exporttt.
 ttf(rwlock).
 applydnf(releaseWrite(P)).
 applysc(releaseWrite_dnf_2,Readers).
-prunett.
-applyst(releaseWrite_dnf_2,P).
-prunett.
-applyst(releaseWrite_dnf_3,P).
 prunett.
 gentc.
 writett.

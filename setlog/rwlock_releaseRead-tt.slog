@@ -1,0 +1,49 @@
+releaseRead_ts_16(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  subset({P},Readers) &
+  Readers neq {P}.
+
+releaseRead_tc_16(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+
+releaseRead_ts_17(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  Readers={P}.
+
+releaseRead_tc_17(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n0)}.
+
+releaseRead_ts_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={}.
+
+releaseRead_tc_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={}.
+
+releaseRead_ts_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={_56334} &
+  dec(_56334,sum([creatorProcess,u(processPrevAxiom)])).
+
+releaseRead_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n1)}.
+
+releaseRead_ts_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={_56334,_56404/_56406} &
+  _56334 neq _56404 &
+  dec([_56334,_56404],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_56406,set(sum([creatorProcess,u(processPrevAxiom)]))).
+
+releaseRead_tc_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n1),u(processPrevAxiom:n2)}.
+
