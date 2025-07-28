@@ -1,10 +1,4 @@
-% setlog_ttf-0.1.5a
-
-% a
-% bug fixed in export_ts/5 when last conjunct of TS is true
-% in ttf_sp arguments X and R to dares were in the wrong place
-% besides in ttf_sp(dares,1,R,_) "& true" was missing
-
+% setlog_ttf-0.1.5b
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                             %
@@ -19,7 +13,7 @@
 %                                                             %
 %                          March 2025                         %
 %                                                             %
-%                    Revised June 2025                        %
+%                    Revised July 2025                        %
 %                                                             %
 %                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,6 +171,7 @@
 :- consult('ttf_sp.pl').
 
 ttf(Spec) :-
+%  nb_setval(groundsol,off),
   (atom(Spec) ->
      (setlog:dvariables(_) ->
         nb_setval(spec,Spec),
@@ -378,7 +373,7 @@ dnf_ts(Op,N,[L,P],TTi,[Conj | PreDNF],TTf) :-
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% applysp(++label,+tt1,+atom,-tt)
+% applysp(++label,+atom)
 %
 % (1) now variables in Atom coincide with
 %     those used in IS+OS whenever the names
@@ -446,14 +441,20 @@ arguments_ok(Atom,OS) :-
   forall(member(X,Vars),\+setlog:member_strong(X,VOut)).
 
 % search_atom(AH,P,A,Body,IO,NewSAtom,[[AH,P1,Body,IO]])
-% search_atom(H,P,A,Body)
-% H head of atom
+% AH head of atom
 % P parameters of atom
-% A is such that ttf_sp_in(H,A) in ttf_sp.pl
+% A is a natural number such that ttf_sp_in(AH,A) in ttf_sp.pl
 % Body body of the formula
 % IO input and output variables
 % NewSAtom string representing the input atom given by the user
 % P1 arguments of the atom as found in Body
+%
+% TODO this implementation stops as soon as the first atom is
+%      found in Body. it should collect all occurrences of
+%      atom. the code looks like as if it collects all 
+%      occurrences but it doesn't. to fix this: search_atom1
+%      and search_atom_conj should always be recursive;
+%      findall in search_atom should be modified
 %
 % TODO printing should be done in applysp
 %
@@ -474,6 +475,7 @@ search_atom1(H,P,A,[Conj | _],IO) :-
    search_atom_conj(H,P,A,Conj,IO),!.
 search_atom1(H,P,A,[_ | UnfBody],IO) :- search_atom1(H,P,A,UnfBody,IO).
 
+
 % exact match
 search_atom_conj(H,P,A,[C | _],_) :-
   C =.. [H | PC],
@@ -493,18 +495,31 @@ search_atom_conj(H,P,A,[_ | Rest],IO) :- search_atom_conj(H,P,A,Rest,IO).
 %
 match_general(_,[],[]) :- !.
 match_general(IO,[X|P],[Y|IPC]) :-
-  term_variables(X,VX),
-  term_variables(Y,VY),
-  (member(A,VX),setlog:get_var(IO,A,_),! ; member(B,VY),setlog:get_var(IO,B,_)),
-  X == Y,!,
-  match_general(IO,P,IPC).
+   var(X),var(Y),!,
+   match_general_vars(IO,[X|P],[Y|IPC]).
+% if X or Y are general terms, their variables must verify
+% any of the above conditions
 match_general(IO,[X|P],[Y|IPC]) :-
-  term_variables(X,VX),
-  term_variables(Y,VY),
-  forall(member(A,VX),\+setlog:get_var(IO,A,_)),
-  forall(member(B,VY),\+setlog:get_var(IO,B,_)),
-  X = Y,
-  match_general(IO,P,IPC).
+   term_variables(X,VX),
+   term_variables(Y,VY),
+   match_general(IO,VX,VY),
+   match_general(IO,P,IPC).
+
+% if X is an IO variable, X and Y must be the same variable
+match_general_vars(IO,[X|P],[Y|IPC]) :-
+   setlog:get_var(IO,X,_),!,  
+   X == Y,
+   match_general(IO,P,IPC).
+% if Y is an IO variable, X and Y must be the same variable
+match_general_vars(IO,[X|P],[Y|IPC]) :-
+   setlog:get_var(IO,Y,_),!,  
+   X == Y,
+   match_general(IO,P,IPC).
+% if both X and Y aren't IO variables, then they are unified
+match_general_vars(IO,[X|P],[Y|IPC]) :-
+   X = Y,
+   match_general(IO,P,IPC).
+
 
 % genttsp(H,Atom,Node,TTi,TTf)
 % test specifications coming from the application
@@ -831,9 +846,7 @@ genttex(H,V,T,CE,Pred,Node,TTi,TTf) :-
   gen_ts_ex(V,T,CE,Pred,SPS),
   update_tt(H,ex,L,P,FPreds,TTi,SPS,TTf).
 
-%%% GIAN
-% check if this is ok
-% the idea is that NegX should be an element of V not satisfying Pred
+% NegX should be an element of V not satisfying Pred
 % the elements of V are of the form CE (CE is the control expression
 % of a REQ with domain V)
 %
@@ -949,22 +962,27 @@ gentc(Timeout,Opt) :-
          maplist(conj_to_list,Paths1,FPreds),
          write_progress_p,
          generate_tc_set(FPreds,IS,Timeout,Opt1,TCS),
-         process_tc_set(TCS,TT,TT1),!,    %%%% GIAN: why this cut ????????????
+         process_tc_set(TCS,TT,TT1),!,    
          write_progress_e,
          nb_setval(ttf_tt,[[IS,OS,Root,UB],TT1])
-      )
+      ),
+      nb_setval(groundsol,off),
+      nb_setval(type_check,off)
   ;
       error(["(ttf) current testing tree seems to be corrupted"])
   ).
 
 % TODO get timeout and options from the environment
 %
-gentc :- gentc(60000,[type_check,groundsol]).
+gentc :-
+  gentc(60000,[type_check,groundsol]),
+  nb_setval(groundsol,off),
+  nb_setval(type_check,off).
 
 % TSS -> test specification set
 % each test specification
 % is a pair [PP,[L,P]] where 
-% PP is the path of the second components of each node
+% PP is the path of the second component of each node
 % (i.e. predicates); and [L,P] is the leaf node. these
 % tuples are taken from the paths from root to each leaf
 % setlog_str with groundsol activated is called for each
@@ -973,9 +991,13 @@ gentc :- gentc(60000,[type_check,groundsol]).
 % the fifth argument of setlog_str; [L,P] are those of the
 % corresponding pair in TSS; and TC (test case) is,
 % when R = success, a list of elements of the form N = V
-% where is a variable name (as in read_term) and V is a
+% where N is a variable name (as in read_term) and V is a
 % ground term; when R in {failure,timeout} V is a variable
-% 
+%
+% (1) in F types aren't expanded while in TV they are
+%     so expand_typs replaces dec(V,T) by dec(V,ET)
+%     where ET is the expansion of T
+%
 generate_tc_set([],_,_,_,[]) :- !.
 generate_tc_set([[F,[L,P]] | TSS],IS,T,Opt,[[Res,L,P,TC1] | TCS1]) :-
   term_variables(F,VarF),
@@ -984,7 +1006,10 @@ generate_tc_set([[F,[L,P]] | TSS],IS,T,Opt,[[Res,L,P,TC1] | TCS1]) :-
   b_getval(ttf_op,Op),
   include(first(Op),TV,TVOp),
   gen_dec_tc(TC,TVOp,DEC),
-  copy_term([TC,(F & DEC)],[TC1,F1]),
+  setlog:list_to_conj(F,FL),
+  expand_types(FL,FL1),          % (1)
+  setlog:list_to_conj(F2,FL1),
+  copy_term([TC,(F2 & DEC)],[TC1,F1]),
   term_string(F1,SF,[variable_names(TC1)]),
   write_progress_i(gentc,L),
   (setlog:setlog_str(SF,TC1,T,_,Res,Opt),! ; Res = failure),
@@ -1120,7 +1145,6 @@ exporttt :-
   ).
 
 % exporttt(Stream,IS,Paths)
-% GIAN: why cut after export_ts (tiwce) !!!!!
 %
 exporttt(_,_,_,[]) :- !.
 exporttt(Stream,Names,IS,[[Path,[Label,P]] | Paths]) :-
@@ -1242,7 +1266,7 @@ collectPaths([L,P],[Path1,_],[Path,_],Paths1,Paths,TT) :-
   neighbors([L,P],TT,Nei),
   (Nei == [] ->                                     % if node is leaf
      append(Paths1,[[Path,[L,P]]],Paths)            % add Path to Paths
-  ;                                                 % if node isn't lea
+  ;                                                 % if node isn't leaf
      collectPaths1(Nei,[Path,_],_,Paths1,Paths,TT)  % get all the paths of its children
   ).
 
@@ -1369,6 +1393,13 @@ write_progress_f :-
   write('                                                                        '),
   write('\r'),
   flush_output.
+
+expand_types([],[]) :- !.
+expand_types([C | L],[dec(V,ET) | NL]) :-
+  C = dec(V,T),!,
+  setlog:expand_type(T,ET),
+  expand_types(L,NL).
+expand_types([C | L],[C | NL]) :- expand_types(L,NL).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

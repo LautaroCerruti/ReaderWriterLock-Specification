@@ -1,4 +1,4 @@
-% setlog_tc-2.3j 
+% setlog_tc-2.3l - 04/07/2025
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -10,7 +10,7 @@
 %           by Maximiliano Cristia' and  Gianfranco Rossi
 %                          January 2021
 %
-%                     Revised March 2025
+%                     Revised July 2025
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -182,7 +182,8 @@ assert_vars_types((C & F),VN) :-
    ),
    assert_vars_types(F,VN)
    ;
-   type(Var,Type),!            % if already declared with same type, do nothing
+   type(Var,Type),!,            % if already declared with same type, do nothing
+   assert_vars_types(F,VN)
    ;
    print_type_error_dec_3(dec(V,Type),VN)
   ).
@@ -726,10 +727,11 @@ typecheck_constraint(nexists(D,P,F1,F2),VN) :- !,
 %     constraint we don't have a type clash.
 %
 % TODO remove special cases; implement type inference for let
+%
 % special case for TTF
 typecheck_constraint(let(P,D,F),VN) :-
   length(P,LP),
-  (D = dom(R,_), LP = 1,! ; D = (dom(R,_)&dom(R,_)), LP = 2),!,
+  (D = dom(R,_), LP = 1,! ; D = (dom(R,_)&dom(_R,_)), LP = 2),!,  % R & _R same type
   typecheck_term(R,set([Trx,_]),VN),
   forall(member(B,P),(get_var(VN,B,Var), assertz(type(Var,set(Trx))))),
   setlog:conj_append(D,F,NF),
@@ -830,7 +832,7 @@ typecheck_term(X,T,VN) :-
   ).
 typecheck_term(X,T,VN) :-
   var(X),!,
-  (get_var(VN,X,VarX), type(VarX,T1) ->
+  (get_var(VN,X,VarX),type(VarX,T1) ->
      (T = T1 ->
         true
      ;
@@ -1347,7 +1349,7 @@ get_type([[_,_]|DEC],X,T) :-
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% gen_typed_eq(NonIntVar,NeqConst,VN,L,N,EqOther)
+% gen_typed_eq(NonIntVar,NeqConst,VN,L,N,-EqOther)
 % - NonIntVar list of variables for which a value has
 %   to be generated
 % - NeqConst list of constants which the generated
@@ -1531,10 +1533,17 @@ gen_typed_val(sum([C|_]),L,N,Val) :-
 gen_typed_val(set(T),L,N,Val) :- !,
   gen_typed_val(T,L,N,Val1),
   Val = {} with Val1.
+% product type of exactly 2 types
+% product type of less than 2 aren't allowed
 gen_typed_val([T,U],L,N,Val) :-
   gen_typed_val(T,L,N,Val1),
   gen_typed_val(U,L,N,Val2),
   Val = [Val1,Val2].
+% product type of any number of types
+gen_typed_val([T|R],L,N,Val) :-
+  gen_typed_val(T,L,N,ValT),
+  gen_typed_val(R,L,N,ValR),
+  Val = [ValT | ValR].
 
 % gen_typed_val_list(TypeL,L,N,ValL)
 gen_typed_val_list([],_,_,[]) :- !.

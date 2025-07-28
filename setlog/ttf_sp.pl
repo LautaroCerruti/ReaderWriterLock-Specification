@@ -1,3 +1,5 @@
+% ttf_sp.pl - release 0.1a, June 2025
+
 :- discontiguous ttf_sp_in/2.
 
 :- discontiguous ttf_sp/4.
@@ -75,19 +77,19 @@ ttf_sp(diff,8,S,T) :-
 
 ttf_sp_in(dares,2).
 
-ttf_sp(dares,1,R,_) :- R = {} & true.
+ttf_sp(dares,1,_,R) :- R = {} & true.
 
-ttf_sp(dares,2,R,X) :- R neq {} & X = {}.
+ttf_sp(dares,2,X,R) :- R neq {} & X = {}.
 
-ttf_sp(dares,3,R,X) :- R neq {} & dom(R,X).
+ttf_sp(dares,3,X,R) :- R neq {} & dom(R,X).
 
-ttf_sp(dares,4,R,X) :- R neq {} & X neq {} & let([D], dom(R,D), subset(X,D) & X neq D).
+ttf_sp(dares,4,X,R) :- R neq {} & X neq {} & let([D], dom(R,D), subset(X,D) & X neq D).
 
-ttf_sp(dares,5,R,X) :- R neq {} & X neq {} & let([D], dom(R,D), disj(X,D)).
+ttf_sp(dares,5,X,R) :- R neq {} & X neq {} & let([D], dom(R,D), disj(X,D)).
 
-ttf_sp(dares,6,R,X) :- R neq {} & let([D], dom(R,D), ndisj(X,D) & subset(D,X)).
+ttf_sp(dares,6,X,R) :- R neq {} & let([D], dom(R,D), ndisj(X,D) & subset(D,X)).
 
-ttf_sp(dares,7,R,X) :-
+ttf_sp(dares,7,X,R) :-
   R neq {} & let([D], dom(R,D), ndisj(X,D) & nsubset(D,X) & nsubset(X,D)).
 
 % oplus
@@ -142,19 +144,19 @@ ttf_sp(rres,7,R,S) :-
 
 ttf_sp_in(dres,2).
 
-ttf_sp(dres,1,R,_) :- R = {} & true.
+ttf_sp(dres,1,_,R) :- R = {} & true.
 
-ttf_sp(dres,2,R,S) :- R neq {} & S = {}.
+ttf_sp(dres,2,S,R) :- R neq {} & S = {}.
 
-ttf_sp(dres,3,R,S) :- R neq {} & dom(R,S).
+ttf_sp(dres,3,S,R) :- R neq {} & dom(R,S).
 
-ttf_sp(dres,4,R,S) :- R neq {} & S neq {} & let([A], dom(R,A), subset(S,A) & S neq A).
+ttf_sp(dres,4,S,R) :- R neq {} & S neq {} & let([A], dom(R,A), subset(S,A) & S neq A).
 
-ttf_sp(dres,5,R,S) :- R neq {} & S neq {} & let([A], dom(R,A), disj(S,A)).
+ttf_sp(dres,5,S,R) :- R neq {} & S neq {} & let([A], dom(R,A), disj(S,A)).
 
-ttf_sp(dres,6,R,S) :- R neq {} & let([A], dom(R,A), ndisj(S,A) & subset(A,S) & A neq S).
+ttf_sp(dres,6,S,R) :- R neq {} & let([A], dom(R,A), ndisj(S,A) & subset(A,S) & A neq S).
 
-ttf_sp(dres,7,R,S) :-
+ttf_sp(dres,7,S,R) :-
   R neq {} & let([A], dom(R,A), ndisj(S,A) & nsubset(A,S) & nsubset(S,A)).
 
 % rares

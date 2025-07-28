@@ -1,4 +1,4 @@
-%setlog499-1a
+%setlog499-1b
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -12,7 +12,7 @@
 %%
 %%                        Last revision by
 %%               Gianfranco Rossi and Maximiliano Cristia'
-%%                          (May 2025)
+%%                          (June 2025)
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -155,7 +155,6 @@ top_level :-
        true        
     ),
     remove_dec(Goal,Goal1),
-
     extract_vars(Goal1,NonLocalVars),
     remove_local(VarNames,NonLocalVars,VarNamesNL),
     b_setval(varnames,VarNamesNL),     % varnames is used by sat_groundsol
@@ -1210,7 +1209,7 @@ solve_goal_fin(G,ClistNew) :-
     solve_goal_constr_nf(GClist,GAlist,Clist),
     final_solve(Clist,ClistNew1),
     remove_delay(ClistNew1,ClistNew2),
-    sat(ClistNew2,ClistNew3,f),     
+    sat(ClistNew2,ClistNew3,f),
     (nb_getval(groundsol,on) ->
        sat_groundsol(ClistNew3,ClistNew)
     ;
@@ -1347,13 +1346,32 @@ get_groundsol_int(SFCgSet,[X|IntVars],SFCg) :-
   append(SFCgSet,MinSol,SFCg),
   sat(SFCg,_,f),!.   % (1)
 % this next clause is due to errors in CLP(Q)
-% it can be deleted when CLP(Q) gests fixed
+% it can be deleted when CLP(Q) gets fixed
 get_groundsol_int(SFCgSet,[X|IntVars],SFCg) :-
-  mk_sum_to_minimize([X|IntVars],Sum),
+  mk_sum_to_minimize_clpq([X|IntVars],Sum),
   bb_inf_all([X|IntVars],[X|IntVars],Sum,Vertex),
-  get_min_sol([X|IntVars],[X|IntVars],Vertex,MinSol), 
+  get_min_sol([X|IntVars],[X|IntVars],Vertex,MinSol),
   append(SFCgSet,MinSol,SFCg),
   sat(SFCg,_,f),!.
+
+% mk_sum_to_minimize_clpq(SizeVars,Sum)
+% SizeVars = [A,B,C] --> Sum = A; Sum = A+B; Sum = A+B+C
+% this predicate is used due to errors in clpq
+%
+mk_sum_to_minimize_clpq(L,S) :-
+  length(L,N),
+  between(1,N,X),mk_sum_to_minimize(X,L,S).
+
+mk_sum_to_minimize(1,[X|_],X) :- !.
+mk_sum_to_minimize(N,L,S) :-
+  length(L1,N),
+  append(L1,_,L),
+  mk_sum_to_minimize1(L1,S).
+
+mk_sum_to_minimize1([X],X) :- !.
+mk_sum_to_minimize1([X|SizeVars],Sum) :-
+    mk_sum_to_minimize1(SizeVars,Sum1),
+    Sum = X + Sum1.
 
 % get_neq_int(SFCNew,NeqVar,NeqConst,IntVar)
 % - SFCNew is the constraint store
@@ -7816,7 +7834,7 @@ sat_foreach4([foreach(D,P,Fo,FP)|R1],R2,c,F) :-         % foreach(C in Dom,P,Fo,
         msg_sort_error(foreach)    
     ).
 
-sat_nforeach4([nforeach(CE_Dom,V,Fl,PP)|R1],R2,c,F) :-  % nforeach(C in Dom,P,Fo,FP)  
+sat_nforeach4([nforeach(CE_Dom,V,Fl,PP)|R1],R2,c,F) :-  % nforeach(C in Dom,P,Fo,FP)
     (nonvar(CE_Dom), CE_Dom = (CtrlExpr in Dom) ->
         ctrl_expr(CtrlExpr,V,LV,CtrlExprNew),
         chvar(LV,[],_FVars,[Fl,CtrlExpr,PP,CtrlExpr],[],_FVarsNew,[FlNew,_PNew,PPNew,CtrlExprNew]),
@@ -9526,8 +9544,8 @@ check_ris(ris(CE_Dom,LVars,_Fl,_P,_PP)) :-
 ctrl_expr_ok(CT) :-
      ctrl_expr(CT,[],_,_).
 
-%separate_sortc_LV(+Cons,+Vars,-OtherCons,-VarsSortCons)      
-%puts in VarsSortCons all sort constraints possibly occurring in 
+%separate_sortc_LV(+Cons,+Vars,-OtherCons,-VarsSortCons)
+%put in VarsSortCons all sort constraints possibly occurring in 
 %Cons and involving some variable in Vars; all other constraints
 %are in OtherCons
 separate_sortc_LV([],_LV,[],[]).
@@ -9604,8 +9622,7 @@ unfold_nested_exists(exists([D],Fo),exists(D,Fo)) :- !.
 unfold_nested_exists(exists([D|RD],Fo),exists(D,Fo1)) :-
     unfold_nested_exists(exists(RD,Fo),Fo1).
 
-% remove_cons(CList,Cons,CListNew): true if CListNew is CList without 
-% any constraint Cons
+%remove_cons(CList,Cons,CListNew): true if CListNew is CList without any constraint Cons
 remove_cons([],_,[]) :- !.
 remove_cons([C1|CList],Cons,CListNew) :-
     C1 == Cons,!,
@@ -10922,7 +10939,7 @@ extract_vars(forall(X in Y,B),Vars) :-!,
     extract_vars(B,L2),
     listunion(L1,L2,L),
     remove_var(X,L,Vars).
-%foreach
+%foreach/nforeach
 extract_vars(foreach(CT in D,F),Vars) :- !,     % foreach(X in D,F) 
     extract_vars(foreach(CT in D,[],F,true),Vars).
 extract_vars(foreach(CT in D,V,F,P),Vars) :- !, % foreach(X in D,LocalVars,F,P) 
@@ -10948,6 +10965,10 @@ extract_vars(nforeach(CT in D,F),Vars) :- !,    % nforeach(X in D,F)
     extract_vars(foreach(CT in D,[],F,true),Vars).
 extract_vars(nforeach(CT in D,V,F,P),Vars) :- !,% foreach(X in D,LocalVars,F,P)
     extract_vars(foreach(CT in D,V,F,P),Vars).
+extract_vars(nforeach(LDom,F),Vars) :- !,       % nforeach([X1 in A1,...,Xn in An],F)
+    extract_vars(foreach(LDom,[],F,true),Vars).
+extract_vars(nforeach(LDom,V,F,P),Vars) :- !,   % nforeach([X1 in A1,...,Xn in An],...)
+    extract_vars(foreach(LDom,V,F,P),Vars).
 %let/nlet
 extract_vars(let(V,Conj,F),Vars) :- !,          % let(V,Conj,F)
     extract_vars(Conj,L1),
@@ -11060,7 +11081,7 @@ default_int_solver(clpq).          % clp(Q) constraint solver
 
 %%% constraint solving mode (default: prover([]))    
 %default_mode(solver).            % always compute variable substitutions
-default_mode(prover(S)) :-        % don't compute variable substitutions if not necessary    
+default_mode(prover(S)) :-    % don't compute variable substitutions if not necessary    
    default_prover_mode_strategies(S). 
                                                        
 default_prover_mode_strategies([]). 
@@ -11103,7 +11124,7 @@ type_constraints_to_be_shown([set(_),integer(_),rel(_),pfun(_),pair(_),
 
 %%% prefix of fresh variable names
 fresh_nl_variable_prefix([95,78]).    %"_N"  (non-local vars)
-fresh_loc_variable_prefix([95,88]).   %"_X"  (local vars)
+fresh_loc_variable_prefix([95,88]).    %"_X"  (local vars)
 
 %%%%%%%%%% general
 
