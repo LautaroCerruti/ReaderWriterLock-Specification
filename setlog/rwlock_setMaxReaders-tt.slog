@@ -1,7 +1,7 @@
 setMaxReaders_ts_11(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N>=_106470 &
-  dec(_106470,int) &
-  size(Readers,_106470) &
+  N>=_107000 &
+  dec(_107000,int) &
+  size(Readers,_107000) &
   N>0 &
   Readers={}.
 
@@ -10,26 +10,26 @@ setMaxReaders_tc_11(N,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={}.
 
 setMaxReaders_ts_12(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N>=_106470 &
-  dec(_106470,int) &
-  size(Readers,_106470) &
+  N>=_107000 &
+  dec(_107000,int) &
+  size(Readers,_107000) &
   N>0 &
-  Readers={_106966} &
-  dec(_106966,sum([creatorProcess,u(processPrevAxiom)])).
+  Readers={_107496} &
+  dec(_107496,sum([creatorProcess,u(processPrevAxiom)])).
 
 setMaxReaders_tc_12(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=1 &
   Readers={u(processPrevAxiom:n0)}.
 
 setMaxReaders_ts_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  N>=_106470 &
-  dec(_106470,int) &
-  size(Readers,_106470) &
+  N>=_107000 &
+  dec(_107000,int) &
+  size(Readers,_107000) &
   N>0 &
-  Readers={_106966,_107036/_107038} &
-  _106966 neq _107036 &
-  dec([_106966,_107036],sum([creatorProcess,u(processPrevAxiom)])) &
-  dec(_107038,set(sum([creatorProcess,u(processPrevAxiom)]))).
+  Readers={_107496,_107566/_107568} &
+  _107496 neq _107566 &
+  dec([_107496,_107566],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_107568,set(sum([creatorProcess,u(processPrevAxiom)]))).
 
 setMaxReaders_tc_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=2 &
@@ -57,9 +57,9 @@ setMaxReaders_tc_24(N,Readers,WriterLockState,Writer,MaxReaders) :-
   N=0.
 
 setMaxReaders_ts_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _106724>N &
-  dec(_106724,int) &
-  size(Readers,_106724) &
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
   N<2.
 
 setMaxReaders_tc_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -67,9 +67,9 @@ setMaxReaders_tc_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={}.
 
 setMaxReaders_ts_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _106724>N &
-  dec(_106724,int) &
-  size(Readers,_106724) &
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
   N=2.
 
 setMaxReaders_tc_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -77,9 +77,9 @@ setMaxReaders_tc_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2)}.
 
 setMaxReaders_ts_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _106724>N &
-  dec(_106724,int) &
-  size(Readers,_106724) &
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
   N=3.
 
 setMaxReaders_tc_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -87,9 +87,9 @@ setMaxReaders_tc_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2),u(processPrevAxiom:n3)}.
 
 setMaxReaders_ts_35(N,Readers,WriterLockState,Writer,MaxReaders) :-
-  _106724>N &
-  dec(_106724,int) &
-  size(Readers,_106724) &
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
   3<N.
 
 setMaxReaders_tc_35(N,Readers,WriterLockState,Writer,MaxReaders) :-

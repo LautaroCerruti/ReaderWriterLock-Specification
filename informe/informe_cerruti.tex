@@ -1,0 +1,1411 @@
+\documentclass[a4paper, 12pt]{article}
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\usepackage{minted}
+\usemintedstyle{monokai}
+\usepackage{amsmath,amssymb}
+\usepackage{dirtree}
+\usepackage{bussproofs}
+
+\usepackage{listings}
+\usepackage{zed-csp}
+
+\def\fuzz{{\large\it f\kern0.1em}{\normalsize\sc uzz}}
+\let\Fuzz=\fuzz
+\def\ZRM{{\rm ZRM}}
+
+\makeatletter % Oh-ho: here comes some more lark's vomit ...
+
+\def\demo{\par\vbox\bgroup\begingroup\quote}
+\def\gives{\endquote\endgroup\egroup}
+\def\enddemo{\global\@ignoretrue}
+
+% Try doing this in pure LaTeX without `visual formatting'!
+\def\symtab{\setbox0=\vbox\bgroup \def\\{\cr}
+        \halign\bgroup\strut$##$\hfil&\quad##\hfil\cr}
+\def\endsymtab{\crcr\egroup\egroup
+	\dimen0=\ht0 \divide\dimen0 by2 \advance\dimen0 by\ht\strutbox
+	\splittopskip=\ht\strutbox \vbadness=10000
+ 	\predisplaypenalty=0
+	$$\halign{##\cr\hbox to\linewidth{% 
+		\valign{##\vfil\cr
+			\setbox1=\vsplit0 to\dimen0 \unvbox1\cr 
+			\noalign{\hfil}\unvbox0\cr
+			\noalign{\hfil}}}\cr 
+		\noalign{\prevdepth=\dp\strutbox}}$$
+	\global\@ignoretrue}
+
+\makeatother % Sanity is restored
+
+\lstdefinelanguage{mygrammar}{
+  morekeywords={for, to, do},
+  sensitive=false,
+  morecomment=[l]{\%},
+  morestring=[b]",
+}
+
+\lstdefinestyle{mystyle}{
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape,
+}
+
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+\usepackage{unicode-math}
+\defaultfontfeatures{Scale=MatchLowercase}
+\defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+	\usepackage[]{microtype}
+	\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+	\IfFileExists{parskip.sty}{%
+		\usepackage{parskip}
+	}{% else
+		\setlength{\parindent}{0pt}
+		\setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+	\KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+	pdftitle={R Notebook},
+	hidelinks,
+	pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{xcolor}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+	\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\ifluatex
+\usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\usepackage{amsmath,amssymb,amsthm}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{1,1,1}
+
+
+% Esto es un comentario
+\usepackage[spanish]{babel} % Diccionario español.
+\usepackage{graphicx} %para insertar imágenes
+\usepackage{fancyhdr} %para encabezado y pie de página
+\usepackage{amssymb} %algunos símbolos matemáticos no tan comunes
+\usepackage{blindtext} %Este se puede borrar. es para poner texto de relleno automático.
+\usepackage{xcolor} %Si quisieramos poner texto en color
+\usepackage{float}
+\usepackage{diagbox}
+\usepackage{relsize}
+
+% ajuste de los margenes
+\topmargin=-1cm
+\oddsidemargin=0cm
+\textheight=24cm
+\textwidth=17cm
+
+\usepackage{framed}
+\newcommand{\desig}[2]{\item #1 $\approx #2$}
+\newenvironment{designations}
+  {\begin{leftbar}
+    \begin{list}{}{\setlength{\labelsep}{0cm}
+                   \setlength{\labelwidth}{0cm}
+                   \setlength{\listparindent}{0cm}
+                   \setlength{\rightmargin}{\leftmargin}}}
+  {\end{list}\end{leftbar}}
+
+
+\setlength{\parskip}{8pt}
+
+\addtolength{\textwidth}{0.2cm}
+\setlength{\parskip}{8pt}
+\setlength{\parindent}{0.5cm}
+\linespread{1.5}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Acá empieza el documento  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+% Para cambiar los nombres de Tabla (por defecto sale "Cuadro") y Bibliografía (por defecto, Referencias)
+% Estas dos líneas tienen que estar después del "\begin{document}". Si no, no funciona.
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\refname}{Referencias y Bibliografía}
+
+%%%%%%%%%%%%%%%%%%%% CARÁTULA %%%%%%%%%%%%%%%%
+% Aunque hay formas más sencillas de poner título, autores, fecha y resumen, esta es la que te da más libertad de edición.
+
+\begin{titlepage}
+
+%Acá voy a poner los dos logos
+\begin{minipage}{2.6cm}
+\includegraphics[width=\textwidth]{grafiquitos/fceia.pdf}
+\end{minipage}
+\hfill
+%
+\begin{minipage}{6cm}
+\begin{center}
+\normalsize{Universidad Nacional de Rosario\\
+Facultad de Ciencias Exactas,\\
+Ingeniería y Agrimensura\\
+Departamento de Ciencias de la Computación\\}
+\end{center}
+\end{minipage}
+\hspace{0.5cm} %Este espacio horizontal lo agregué para que quede más centrado
+\hfill
+\begin{minipage}{2.6cm}
+\includegraphics[width=\textwidth]{grafiquitos/unr.pdf}
+\end{minipage}
+%La suma de los anchos de cada minipage debe ser menor o igual que lo que dice en \textwidth (más arriba).
+
+\vspace{0.5cm} %espacio vertical
+
+\begin{center}
+\normalsize{\sc Ingeniería de Software}\\
+\vspace{0.5cm}
+\Large{\bf Trabajo Práctico
+}\\
+\Large{\bf Verificación de Software 
+}\\
+%\Large{} es más grande que \large{}
+
+\vspace{5cm}
+
+\normalsize
+Cerruti Lautaro\\
+
+\vspace*{0.5cm}
+\small{Julio de 2025}
+
+\vspace*{3cm}
+
+
+\vspace{5cm}
+
+\normalsize
+
+\end{center}
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%% FIN DE LA CARÁTULA %%%%%%%%%%%%%%%%
+
+
+% Editando el encabezado y pie de pagina
+\pagestyle{fancy}
+\lhead{\scriptsize{Trabajo Práctico:  Verificación de Software }}
+\rhead{\scriptsize{Cerruti Lautaro}}
+\lfoot{\scriptsize{Ingeniería de Software}}
+\cfoot{\scriptsize{Julio de 2025}}
+\rfoot{\scriptsize{Página \thepage}}
+\renewcommand{\footrulewidth}{0.6pt}
+
+
+\newpage % Salto de página
+\section{Problema: Readers-Writer Lock}
+Se desea especificar el funcionamiento de la primitiva de sincronización Readers-Writer Lock para procesos.
+
+El lock tiene que permitir múltiples lectores en simultáneo pero acceso exclusivo para la escritura. Adicionalmente se quiere poder establecer la cantidad máxima de lectores que se desea permitir en simultáneo con un mínimo de un lector. 
+
+Se deben especificar las operaciones:
+\begin{itemize}
+    \item Adquirir lectura: si no hay ningún proceso escribiendo y no se llegó a máximo de lectores, se adquiere el lock en modo lectura.
+    \item Soltar lectura: se suelta el lock previamente adquirido en modo lectura.
+    \item Adquirir escritura: si no hay ningún proceso leyendo ni escribiendo, se adquiere el lock en modo escritura.
+    \item Soltar escritura: se suelta el lock previamente adquirido en modo escritura.
+    \item Establecer máximo de lectores: se establece un nuevo valor máximo de cantidad de lectores en simultáneo.
+\end{itemize}
+\newpage
+\section{Especificación}
+Primero veamos las designaciones:
+\begin{designations}
+  \desig{$p$ es un proceso}{p \in PROCESS}
+  \desig{$creatorProcess$ es el proceso que crea el lock}{creatorProcess \in PROCESS}
+  \desig{$state$ es el estado de escritura del lock}{state \in STATE}
+  \desig{$res$ es un mensaje de respuesta}{res \in RESPONSE}
+  \desig{el estado del lock}{ReadersWriterLock}
+  \desig{el estado inicial del lock}{ReadersWriterLockInit}
+  \desig{se establece una cantidad maxima de lectores}{SetMaxReaders}
+  \desig{se obtiene el lock en modo lectura}{AcquireRead}
+  \desig{se suelta el lock en modo lectura}{ReleaseRead}
+  \desig{se obtiene el lock en modo escritura}{AcquireWrite}
+  \desig{se suelta el lock en modo escritura}{ReleaseWrite}
+\end{designations}
+
+Ahora definamos los tipos básicos y enumerados.
+\begin{zed}
+[PROCESS] \\
+\also
+STATE ::= locked | unlocked\\
+\also
+RESPONSE ::= ok | errorCantBeLessThanOne | errorCantAllowMoreReaders \\ 
+| errorCantBeLessThanActualReaders | errorLockedByWriter | errorLockedByReader \\
+| errorReadNotAcquired | errorWriteNotLocked | errorWriteLockedByOtherProcess \\
+| errorAlreadyAcquired  
+\end{zed}
+
+Definimos de forma axiomática un proceso llamado $creatorProcess$ para establecer como valor inicial de la variable de estado $writer$.
+
+\begin{axdef}
+creatorProcess : PROCESS
+\end{axdef}
+
+Luego definimos el espacio de estado del lock y el estado inicial:
+\begin{schema}{ReadersWriterLock}
+    readers : \power PROCESS \\
+    writerLockState : STATE \\
+    writer: PROCESS \\
+    maxReaders : \num
+\end{schema}
+
+\begin{schema}{ReadersWriterLockInit}
+    ReadersWriterLock
+\where
+    readers = \emptyset \\
+    writerLockState = unlocked \\
+    writer = creatorProcess \\
+    maxReaders = 1
+\end{schema}
+
+Cabe destacar que el valor de la variable de estado $writer$ solo es relevante cuando el estado del lock $writerLockState$ se encuentra en $locked$. Es necesario inicializarla debido a que la misma tiene que tener un valor para poder hacer las simulaciones en NEXT, la inicialización fue agregada a la especificación por cuestiones de consistencia entre esta y su traducción a $\{log\}$.
+
+Vamos a definir tres invariantes. 
+
+La primera establece que la cantidad máxima de lectores siempre tiene que ser mayor a cero:
+
+\begin{schema}{InvMaxReadersPositive}
+    ReadersWriterLock
+\where
+    maxReaders > 0
+\end{schema}
+
+La segunda representa que la cantidad de lectores nunca puede ser mayor al máximo establecido:
+\begin{schema}{InvReadersLessThanMaxReaders}
+    ReadersWriterLock
+\where
+    \#readers \leq maxReaders
+\end{schema}
+
+Y la última establece que si hay algún proceso escribiendo no puede haber ningún proceso leyendo:
+\begin{schema}{InvNoReadersWhileWriter}
+    ReadersWriterLock
+\where
+    writerLockState = locked \implies readers = \emptyset
+\end{schema}
+
+La primera operación a especificar es $SetMaxReaders$.  En el caso exitoso, donde el valor que se intenta establecer es válido, se guarda el nuevo máximo y se comunica que la operación se pudo realizar correctamente.
+\begin{schema}{SetMaxReadersOk}
+    \Delta ReadersWriterLock \\
+    n?: \num \\
+    res!: RESPONSE
+\where
+    n? > 0 \\
+    \#readers \leq n? \\
+    maxReaders' = n? \\
+    readers' = readers \\
+    writerLockState' = writerLockState \\
+    writer' = writer \\
+    res! = ok
+\end{schema}
+
+Para esta operación tenemos dos casos de error, el primero es si el valor que se está tratando de establecer como máximo es menor a uno y el segundo se da cuando se está tratando de establecer un máximo menor a la cantidad de lectores actual.
+
+\begin{schema}{MaxReadersIncorrectValue}
+    \Xi ReadersWriterLock \\
+    n?: \num \\
+    res!: RESPONSE
+\where
+    n? \leq 0 \\
+    res! = errorCantBeLessThanOne
+\end{schema}
+
+\begin{schema}{LessThanActualReaders}
+    \Xi ReadersWriterLock \\
+    n?: \num \\
+    res!: RESPONSE
+\where
+    n? < \# readers \\
+    res! = errorCantBeLessThanActualReaders
+\end{schema}
+
+\begin{zed}
+SetMaxReadersErrors \defs MaxReadersIncorrectValue \lor LessThanActualReaders 
+\also
+SetMaxReaders \defs SetMaxReadersOk \lor SetMaxReadersErrors
+\end{zed}
+
+Ahora veamos la operación para adquirir el lock en modo lectura. En el caso exitoso se agrega al proceso como lector y se responde con un mensaje indicando que se pudo obtener el lock.
+
+\begin{schema}{AcquireReadOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \notin readers \\
+    writerLockState = unlocked \\
+    \# readers < maxReaders \\
+    readers' = readers \cup \{p?\} \\
+    writerLockState' = writerLockState \\
+    writer' = writer \\
+    maxReaders' = maxReaders \\
+    res! = ok
+\end{schema}
+
+Para esta operación tenemos tres casos de error: ya se había adquirido previamente, ya se llegó al máximo de lectores permitidos o hay algún proceso escribiendo.
+
+\begin{schema}{AlreadyLockedRead}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \in readers \\
+    res! = errorAlreadyAcquired
+\end{schema}
+
+\begin{schema}{MaxReadersReached}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    \# readers = maxReaders \\
+    res! = errorCantAllowMoreReaders
+\end{schema}
+
+\begin{schema}{ProcessIsWriting}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    res! = errorLockedByWriter
+\end{schema}
+
+\begin{zed}
+AcquireReadError \defs AlreadyLockedRead \lor ProcessIsWriting \lor MaxReadersReached  
+\also
+AcquireRead \defs AcquireReadOk \lor AcquireReadError 
+\end{zed}
+
+Continuemos con la operación para adquirir el lock en modo escritura. En el caso exitoso se adquiere el lock correctamente, se establece el proceso que lo adquirió como el escritor y se retorna una respuesta informando la correcta adquisición. 
+
+\begin{schema}{AcquireWriteOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = unlocked \\
+    readers = \emptyset \\
+    writer' = p? \\
+    writerLockState' = locked \\
+    readers' = readers \\
+    maxReaders' = maxReaders \\
+    res! = ok
+\end{schema}
+
+Nuevamente tenemos tres posibles casos de error: ya se había adquirido el lock previamente, ya hay algún otro proceso escribiendo o hay algún proceso leyendo.
+
+\begin{schema}{AlreadyLockedWrite}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    writer = p? \\
+    res! = errorAlreadyAcquired
+\end{schema}
+
+\begin{schema}{WriteLockedByOtherProcess}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    writer \neq p? \\
+    res! = errorWriteLockedByOtherProcess
+\end{schema}
+
+\begin{schema}{ProcessIsReading}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    readers \neq \emptyset \\
+    res! = errorLockedByReader
+\end{schema}
+
+\begin{zed}
+AcquireWriteError \defs AlreadyLockedWrite \lor WriteLockedByOtherProcess \\ \quad \lor ProcessIsReading 
+\also
+AcquireWrite \defs AcquireWriteOk \lor AcquireWriteError 
+\end{zed}
+
+Ahora veamos la operación para soltar el lock previamente adquirido en modo lectura. En el caso exitoso se saca al proceso que soltó el lock de los lectores actuales.
+
+\begin{schema}{ReleaseReadOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \in readers \\
+    readers' = readers \setminus \{p?\} \\
+    writerLockState' = writerLockState \\
+    writer' = writer \\
+    maxReaders' = maxReaders \\
+    res! = ok
+\end{schema}
+
+Para esta operación solo consideramos un caso de error el cual sucede cuando el proceso que está intentando soltar el lock nunca lo adquirió.
+
+\begin{schema}{ReadNotAcquired}
+    \Xi ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    p? \notin readers \\
+    res! = errorReadNotAcquired
+\end{schema}
+
+\begin{zed}
+ReleaseRead \defs ReleaseReadOk \lor ReadNotAcquired
+\end{zed}
+
+Por último tenemos la operación para soltar el lock adquirido en modo escritura. En su caso exitoso se suelta el lock y se establece el estado en consecuencia.
+
+\begin{schema}{ReleaseWriteOk}
+    \Delta ReadersWriterLock \\
+    p?: PROCESS \\
+    res!: RESPONSE
+\where
+    writerLockState = locked \\
+    writer = p? \\
+    writerLockState' = unlocked \\
+    readers' = readers \\
+    writer' = writer \\
+    maxReaders' = maxReaders \\
+    res! = ok
+\end{schema}
+
+Y tenemos dos posibles casos de error: uno donde el lock esté con estado $unlocked$, es decir que ningún proceso lo haya tomado en modo escritura y otro donde el lock fue adquirido en modo escritura por un proceso distinto al que lo está tratando de soltar.
+
+\begin{schema}{WriteNotLocked}
+    \Xi ReadersWriterLock \\
+    res!: RESPONSE
+\where
+    writerLockState = unlocked \\
+    res! = errorWriteNotLocked
+\end{schema}
+
+\begin{zed}
+ReleaseWriteError \defs WriteNotLocked \lor WriteLockedByOtherProcess 
+\\
+ReleaseWrite \defs ReleaseWriteOk \lor ReleaseWriteError
+\end{zed}
+
+La especificación pasa el control de tipos de Fuzz, se adjunta la misma en un archivo $.tex$ de forma individual para que esto pueda ser verificado, adicionalmente podemos encontrar en el archivo \textbf{readers-writer-lock-fuzz-output} la salida de fuzz al ejecutarlo con la opción $-t$ con la que podemos verificar los tipos de toda la especificación.
+
+\section{Simulaciones}
+Las simulaciones fueron divididas en dos situaciones, la primera que representa un uso más real del sistema y una segunda para probar todos los casos de errores de las distintas operaciones.
+
+Para ejecutar estas simulaciones se cargó el archivo de la traducción a un programa $\{log\}$, se corrió el VCG, se cargó el archivo que generó el VCG y se ejecutaron las distintas simulaciones.
+\subsection{Primera simulación}
+Esta simulación es la que busca evaluar un escenario funcional realista donde si bien no se prueban todos los casos de error, se utilizan todas las operaciones.
+
+En la misma probamos establecer un máximo de lectores, que varios procesos adquieran el lock en modo lectura, que un proceso intente adquirirlo en modo lectura cuando ya se llegó al máximo de lectores, que un proceso intente adquirir en modo escritura cuando hay procesos como lectores, adquisiciones exitosas en modo escritura y que el lock sea soltado en ambos modos. 
+\begin{verbatim}
+[initial]:[invMaxReadersPositive, invReadersLessThanMaxReaders, 
+    invNoReadersWhileWriter] 
+    >> setMaxReaders(N:2)
+    >> acquireRead(P:p1)
+    >> acquireRead(P:p2)
+    >> acquireRead(P:p3)
+    >> acquireWrite(P:p3)
+    >> releaseRead(P:p1)
+    >> acquireRead(P:p1)
+    >> releaseRead(P:p1)
+    >> releaseRead(P:p2)
+    >> acquireWrite(P:p3)
+    >> acquireWrite(P:p2)
+    >> acquireRead(P:p1)
+    >> releaseWrite(P:p3).
+\end{verbatim}
+Esta simulación generó la siguiente traza:
+\begin{verbatim}
+Execution trace is:
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 1
+  ----> setMaxReaders(N:2)
+Res = ok,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p1)
+Res = ok,  
+Readers = {p1},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p2)
+Res = ok,  
+Readers = {p1,p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p3)
+Res = errorCantAllowMoreReaders,  
+Readers = {p1,p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireWrite(P:p3)
+Res = errorLockedByReader,  
+Readers = {p1,p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> releaseRead(P:p1)
+Res = ok,  
+Readers = {p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p1)
+Res = ok,  
+Readers = {p2,p1},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> releaseRead(P:p1)
+Res = ok,  
+Readers = {p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> releaseRead(P:p2)
+Res = ok,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireWrite(P:p3)
+Res = ok,  
+Readers = {},  
+WriterLockState = locked,  
+Writer = p3,  
+MaxReaders = 2
+  ----> acquireWrite(P:p2)
+Res = errorWriteLockedByOtherProcess,  
+Readers = {},  
+WriterLockState = locked,  
+Writer = p3,  
+MaxReaders = 2
+  ----> acquireRead(P:p1)
+Res = errorLockedByWriter,  
+Readers = {},  
+WriterLockState = locked,  
+Writer = p3,  
+MaxReaders = 2
+  ----> releaseWrite(P:p3)
+Res = ok,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = p3,  
+MaxReaders = 2
+
+true
+\end{verbatim}
+Se obtuvo el resultado esperado y se verificaron las invariantes en toda la simulación.
+
+\subsection{Segunda simulación}
+En esta segunda simulación buscamos probar que todos los casos de error que no probamos con la simulación anterior verifiquen los invariantes. Esto implica probar cosas como establecer un máximo de lectores menor a los lectores actuales, establecer un valor máximo inválido, soltar el lock en ambos modos sin haberlo adquirido previamente, tratar de adquirir un lock cuando ya había sido adquirido, tratar de soltar un lock adquirido por otro proceso y tratar de soltar un lock que no fue adquirido por ningún proceso.
+
+La simulación en la siguiente:
+\begin{verbatim}
+[initial]:[invMaxReadersPositive, invReadersLessThanMaxReaders, 
+    invNoReadersWhileWriter] 
+    >> setMaxReaders(N:0)
+    >> setMaxReaders(N:2)
+    >> acquireRead(P:p1)
+    >> acquireRead(P:p2)
+    >> setMaxReaders(N:1)
+    >> releaseRead(P:p2)
+    >> releaseRead(P:p2)
+    >> acquireRead(P:p1)
+    >> releaseRead(P:p1)
+    >> acquireWrite(P:p1)
+    >> acquireWrite(P:p1)
+    >> releaseWrite(P:p2)
+    >> releaseWrite(P:p1)
+    >> releaseWrite(P:p1).
+\end{verbatim}
+
+La cual genera la siguiente traza:
+\begin{verbatim}
+Execution trace is:
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 1
+  ----> setMaxReaders(N:0)
+Res = errorCantBeLessThanOne,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 1
+  ----> setMaxReaders(N:2)
+Res = ok,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p1)
+Res = ok,  
+Readers = {p1},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p2)
+Res = ok,  
+Readers = {p1,p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> setMaxReaders(N:1)
+Res = errorCantBeLessThanActualReaders,  
+Readers = {p1,p2},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> releaseRead(P:p2)
+Res = ok,  
+Readers = {p1},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> releaseRead(P:p2)
+Res = errorReadNotAcquired,  
+Readers = {p1},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireRead(P:p1)
+Res = errorAlreadyAcquired,  
+Readers = {p1},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> releaseRead(P:p1)
+Res = ok,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = creatorProcess,  
+MaxReaders = 2
+  ----> acquireWrite(P:p1)
+Res = ok,  
+Readers = {},  
+WriterLockState = locked,  
+Writer = p1,  
+MaxReaders = 2
+  ----> acquireWrite(P:p1)
+Res = errorAlreadyAcquired,  
+Readers = {},  
+WriterLockState = locked,  
+Writer = p1,  
+MaxReaders = 2
+  ----> releaseWrite(P:p2)
+Res = errorWriteLockedByOtherProcess,  
+Readers = {},  
+WriterLockState = locked,  
+Writer = p1,  
+MaxReaders = 2
+  ----> releaseWrite(P:p1)
+Res = ok,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = p1,  
+MaxReaders = 2
+  ----> releaseWrite(P:p1)
+Res = errorWriteNotLocked,  
+Readers = {},  
+WriterLockState = unlocked,  
+Writer = p1,  
+MaxReaders = 2
+
+true
+\end{verbatim}
+Al igual que con la simulación anterior, se puede observar que la traza es correcta y que se verifican las invariantes de estado.
+
+\section{VCG}
+La ejecución del generador de condiciones de verificación (VCG) se realizó con el siguiente comando:
+\begin{verbatim}
+vcg('reader-writer-lock.slog').
+\end{verbatim}
+y este nos generó el archivo \textbf{reader-writer-lock-vc.slog}. Consultando el mismo y ejecutando la verificación con los siguientes comandos:
+\begin{verbatim}
+consult('reader-writer-lock-vc.slog').
+check_vcs_reader-writer-lock.
+\end{verbatim}
+Tenemos el siguiente resultado:
+\begin{verbatim}
+Checking readersWriterLockInit_sat_invMaxReadersPositive ... OK
+Checking readersWriterLockInit_sat_invReadersLessThanMaxReaders ... OK
+Checking readersWriterLockInit_sat_invNoReadersWhileWriter ... OK
+Checking setMaxReaders_is_sat ... OK
+Checking acquireRead_is_sat ... OK
+Checking acquireWrite_is_sat ... OK
+Checking releaseRead_is_sat ... OK
+Checking releaseWrite_is_sat ... OK
+Checking setMaxReaders_pi_invMaxReadersPositive ... OK
+Checking setMaxReaders_pi_invReadersLessThanMaxReaders ... OK
+Checking setMaxReaders_pi_invNoReadersWhileWriter ... OK
+Checking acquireRead_pi_invMaxReadersPositive ... OK
+Checking acquireRead_pi_invReadersLessThanMaxReaders ... OK
+Checking acquireRead_pi_invNoReadersWhileWriter ... OK
+Checking acquireWrite_pi_invMaxReadersPositive ... OK
+Checking acquireWrite_pi_invReadersLessThanMaxReaders ... OK
+Checking acquireWrite_pi_invNoReadersWhileWriter ... OK
+Checking releaseRead_pi_invMaxReadersPositive ... OK
+Checking releaseRead_pi_invReadersLessThanMaxReaders ... OK
+Checking releaseRead_pi_invNoReadersWhileWriter ... OK
+Checking releaseWrite_pi_invMaxReadersPositive ... OK
+Checking releaseWrite_pi_invReadersLessThanMaxReaders ... OK
+Checking releaseWrite_pi_invNoReadersWhileWriter ... OK
+
+Total VCs: 23 (discharged: 23, failed: 0, timeout: 0)
+Execution time (discharged): 0.09174370765686035 s
+yes
+\end{verbatim}
+
+Podemos ver que todas las condiciones son verificadas correctamente por lo que no fue necesario agregar ninguna hipótesis ni utilizar los comandos $vcgce$, $vcacg$ o $findh$.
+
+\section{TTF}
+La generación de los casos de prueba se realizó para cada operación en particular y corresponde analizar cada una por separado, ya que son distintas las tácticas aplicadas. En todas se comenzó aplicando DNF para luego aplicar otras tácticas sobre algunas de las clases de prueba generadas.
+\subsection{SetMaxReaders}
+Luego de aplicar DNF notamos que la primera clase de la disyunción corresponde al caso de $SetMaxReadersOk$, la segunda corresponde a $maxReadersIncorrectValue$ donde el valor que se está tratando de establecer como máximo es menor a 1 y el tercer caso de la disyunción corresponde a $lessThanActualReaders$ donde se esta tratando de establecer un máximo menor a la cantidad de lectores actuales. 
+
+Por esto se decidió primero aplicarle cardinalidad de conjuntos a la clase \textbf{setMaxReaders\_dnf\_1} para generar casos donde se establezcan distintos valores de máximo cuando hay lectores y cuando no.
+Luego aplicamos intervalos de enteros a \textbf{setMaxReaders\_dnf\_2} para que se generen casos donde se prueban más valores que simplemente 0 como valores de máximo inválidos.
+Por último aplicamos intervalo de enteros a \textbf{setMaxReaders\_dnf\_3} para que se generen casos donde hay más lectores.
+
+Los comandos utilizados para generar los casos de prueba para esta operación fueron:
+\begin{verbatim}
+ttf(rwlock).
+applydnf(setMaxReaders(N)).
+applysc(setMaxReaders_dnf_1,Readers).
+applyii(setMaxReaders_dnf_2,N,[-1,0]).
+applyii(setMaxReaders_dnf_3,N,[2,3]).
+prunett.
+gentc.
+exporttt.
+\end{verbatim}
+
+El ejecutar $writett.$ para ver el árbol de pruebas generado tenemos:
+\begin{verbatim}
+setMaxReaders_vis
+  setMaxReaders_dnf_1
+    setMaxReaders_sc_11 -> setMaxReaders_tc_11
+    setMaxReaders_sc_12 -> setMaxReaders_tc_12
+    setMaxReaders_sc_13 -> setMaxReaders_tc_13
+  setMaxReaders_dnf_2
+    setMaxReaders_ii_21 -> setMaxReaders_tc_21
+    setMaxReaders_ii_22 -> setMaxReaders_tc_22
+    setMaxReaders_ii_24 -> setMaxReaders_tc_24
+  setMaxReaders_dnf_3
+    setMaxReaders_ii_31 -> setMaxReaders_tc_31
+    setMaxReaders_ii_32 -> setMaxReaders_tc_32
+    setMaxReaders_ii_34 -> setMaxReaders_tc_34
+    setMaxReaders_ii_35 -> setMaxReaders_tc_35
+\end{verbatim}
+
+En el archivo \textbf{rwlock\_acquireWrite-tt.slog} podemos encontrar los casos de prueba generados, el contenido del mismo es el siguiente:
+\begin{verbatim}
+setMaxReaders_ts_11(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N>=_107000 &
+  dec(_107000,int) &
+  size(Readers,_107000) &
+  N>0 &
+  Readers={}.
+
+setMaxReaders_tc_11(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=1 &
+  Readers={}.
+
+setMaxReaders_ts_12(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N>=_107000 &
+  dec(_107000,int) &
+  size(Readers,_107000) &
+  N>0 &
+  Readers={_107496} &
+  dec(_107496,sum([creatorProcess,u(processPrevAxiom)])).
+
+setMaxReaders_tc_12(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=1 &
+  Readers={u(processPrevAxiom:n0)}.
+
+setMaxReaders_ts_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N>=_107000 &
+  dec(_107000,int) &
+  size(Readers,_107000) &
+  N>0 &
+  Readers={_107496,_107566/_107568} &
+  _107496 neq _107566 &
+  dec([_107496,_107566],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_107568,set(sum([creatorProcess,u(processPrevAxiom)]))).
+
+setMaxReaders_tc_13(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=2 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+
+setMaxReaders_ts_21(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=<0 &
+  N< -1.
+
+setMaxReaders_tc_21(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N= -2.
+
+setMaxReaders_ts_22(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=<0 &
+  N= -1.
+
+setMaxReaders_tc_22(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N= -1.
+
+setMaxReaders_ts_24(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=<0 &
+  N=0.
+
+setMaxReaders_tc_24(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=0.
+
+setMaxReaders_ts_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
+  N<2.
+
+setMaxReaders_tc_31(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N= -1 &
+  Readers={}.
+
+setMaxReaders_ts_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
+  N=2.
+
+setMaxReaders_tc_32(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=2 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2)}.
+
+setMaxReaders_ts_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
+  N=3.
+
+setMaxReaders_tc_34(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=3 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2),
+    u(processPrevAxiom:n3)}.
+
+setMaxReaders_ts_35(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  _107254>N &
+  dec(_107254,int) &
+  size(Readers,_107254) &
+  3<N.
+
+setMaxReaders_tc_35(N,Readers,WriterLockState,Writer,MaxReaders) :-
+  N=4 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2),
+    u(processPrevAxiom:n3),u(processPrevAxiom:n4)}.
+\end{verbatim}
+\subsection{AcquireRead}
+Para esta operación aplicamos primero DNF, esto resulta en cuatro disyunciones, analicemos cada una de forma particular:
+\begin{enumerate}
+  \item La primera disyunción corresponde al caso de $AcquireReadOk$, aquí nos pareció sensato aplicar como segunda táctica Partición Estándar sobre la unión (operador $un$), ya que la misma contiene la implementación más compleja de la operación.
+  \item La segunda corresponde a cuando el lock está adquirido en modo lectura.
+  \item La tercera evalúa cuando el proceso ya adquirió el lock en modo lectura previamente y está tratando de volverlo a adquirir, acá nos pareció interesante aplicar Cardinalidad de Conjuntos para generar casos donde el proceso este como lector solo o con otro proceso.
+  \item La cuarta disyunción corresponde a cuando se alcanzó el máximo de lectores, para este caso aplicamos Intervalo de Enteros para generar casos donde la cantidad máxima toma valores distintos.
+\end{enumerate}
+
+Toda la generación de casos de pruebas se realizó con la siguiente serie de comandos:
+\begin{verbatim}
+ttf(rwlock).
+applydnf(acquireRead(P)).
+applysp(acquireRead_dnf_1,un(Readers, {P}, Readers_)).
+applysc(acquireRead_dnf_3,Readers).
+applyii(acquireRead_dnf_4,MaxReaders,[1,2,3]).
+prunett.
+gentc.
+exporttt.
+\end{verbatim}
+
+El árbol de pruebas generados es el siguiente:
+
+\begin{verbatim}
+acquireRead_vis
+  acquireRead_dnf_1
+    acquireRead_sp_12 -> acquireRead_tc_12
+    acquireRead_sp_14 -> acquireRead_tc_14
+  acquireRead_dnf_2 -> acquireRead_tc_2
+  acquireRead_dnf_3
+    acquireRead_sc_32 -> acquireRead_tc_32
+    acquireRead_sc_33 -> acquireRead_tc_33
+  acquireRead_dnf_4
+    acquireRead_ii_41 -> acquireRead_tc_41
+    acquireRead_ii_42 -> acquireRead_tc_42
+    acquireRead_ii_44 -> acquireRead_tc_44
+    acquireRead_ii_46 -> acquireRead_tc_46
+    acquireRead_ii_47 -> acquireRead_tc_47
+\end{verbatim}
+
+Esto nos generó los casos de pruebas en el archivo \textbf{rwlock\_acquireRead-tt.slog} donde podemos encontrar lo siguiente:
+\begin{verbatim}
+acquireRead_ts_12(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders>_78706 &
+  dec(_78706,int) &
+  size(Readers,_78706) &
+  WriterLockState=unlocked &
+  P nin Readers &
+  Readers={} &
+  {P}neq{}.
+
+acquireRead_tc_12(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=1 &
+  Readers={} &
+  WriterLockState=unlocked &
+  P=u(processPrevAxiom:n0).
+
+acquireRead_ts_14(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders>_78706 &
+  dec(_78706,int) &
+  size(Readers,_78706) &
+  WriterLockState=unlocked &
+  P nin Readers &
+  Readers neq {} &
+  {P}neq{} &
+  disj(Readers,{P}).
+
+acquireRead_tc_14(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=2 &
+  Readers={u(processPrevAxiom:n1)} &
+  WriterLockState=unlocked &
+  P=u(processPrevAxiom:n0).
+
+acquireRead_ts_2(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked.
+
+acquireRead_tc_2(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=locked.
+
+acquireRead_ts_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers={_79492} &
+  dec(_79492,sum([creatorProcess,u(processPrevAxiom)])).
+
+acquireRead_tc_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n0)}.
+
+acquireRead_ts_33(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers={_79492,_79562/_79564} &
+  _79492 neq _79562 &
+  dec([_79492,_79562],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_79564,set(sum([creatorProcess,u(processPrevAxiom)]))).
+
+acquireRead_tc_33(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+
+acquireRead_ts_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
+  MaxReaders<1.
+
+acquireRead_tc_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=0 &
+  Readers={}.
+
+acquireRead_ts_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
+  MaxReaders=1.
+
+acquireRead_tc_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=1 &
+  Readers={u(processPrevAxiom:n0)}.
+
+acquireRead_ts_44(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
+  MaxReaders=2.
+
+acquireRead_tc_44(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=2 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+
+acquireRead_ts_46(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
+  MaxReaders=3.
+
+acquireRead_tc_46(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=3 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2)}.
+
+acquireRead_ts_47(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
+  3<MaxReaders.
+
+acquireRead_tc_47(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=4 &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2),
+    u(processPrevAxiom:n3)}.
+\end{verbatim}
+
+Resulta importante destacar el siguiente caso de prueba:
+\begin{verbatim}
+acquireRead_ts_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
+  MaxReaders<1.
+
+acquireRead_tc_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  MaxReaders=0 &
+  Readers={}.
+\end{verbatim}
+En el mismo se evalúa adquirir el lock en modo lectura cuando la cantidad máxima de lectores es 0, este es un estado que viola el invariante $InvMaxReadersPositive$, probablemente este caso de prueba debería ser manualmente eliminado, ya que el programa no tendría ningún comportamiento definido.
+
+\subsection{AcquireWrite}
+Para esta operación nuevamente aplicamos DNF y analizamos las disyunciones generadas:
+\begin{enumerate}
+  \item La primera disyunción corresponde al caso de $AcquireWriteOk$, aplicamos como segunda táctica Cardinalidad de Conjuntos sobre el conjunto de los lectores, esta clase de prueba $acquireWrite\_dnf\_1$ tiene como condición que el conjunto de lectores esté vacío por lo que de los casos generados al aplicar CC solo debería ser satisfacible uno (donde $Readers = \{\}$). Al ejecutar $punett.$ solo uno de los casos no es podado.
+  \item La segunda corresponde a cuando el proceso que está intentando obtener el lock ya lo obtuvo previamente en modo escritura.
+  \item La tercera se da cuando el lock fue obtenido por otro proceso en modo escritura.
+  \item La cuarta disyunción corresponde a cuando hay algún proceso leyendo. Aquí también aplicamos Cardinalidad de Conjuntos para generar casos de prueba donde haya más de un lector.
+\end{enumerate}
+
+Toda la generación de casos de pruebas se realizó con la siguiente serie de comandos:
+\begin{verbatim}
+ttf(rwlock).
+applydnf(acquireWrite(P)).
+applysc(acquireWrite_dnf_1,Readers).
+applysc(acquireWrite_dnf_4,Readers).
+prunett.
+gentc.
+exporttt.
+\end{verbatim}
+
+El árbol de pruebas generados es el siguiente:
+
+\begin{verbatim}
+acquireWrite_vis
+  acquireWrite_dnf_1
+    acquireWrite_sc_11 -> acquireWrite_tc_11
+  acquireWrite_dnf_2 -> acquireWrite_tc_2
+  acquireWrite_dnf_3 -> acquireWrite_tc_3
+  acquireWrite_dnf_4
+    acquireWrite_sc_42 -> acquireWrite_tc_42
+    acquireWrite_sc_43 -> acquireWrite_tc_43
+\end{verbatim}
+
+Esto nos generó los casos de pruebas en el archivo \textbf{rwlock\_acquireWrite-tt.slog} donde podemos encontrar lo siguiente:
+\begin{verbatim}
+acquireWrite_ts_11(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={} &
+  WriterLockState=unlocked &
+  Readers={}.
+
+acquireWrite_tc_11(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={} &
+  WriterLockState=unlocked.
+
+acquireWrite_ts_2(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=P &
+  WriterLockState=locked.
+
+acquireWrite_tc_2(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=u(processPrevAxiom:n0) &
+  P=u(processPrevAxiom:n0) &
+  WriterLockState=locked.
+
+acquireWrite_ts_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer neq P &
+  WriterLockState=locked.
+
+acquireWrite_tc_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=u(processPrevAxiom:n0) &
+  P=u(processPrevAxiom:n1) &
+  WriterLockState=locked.
+
+acquireWrite_ts_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers neq {} &
+  Readers={_68582} &
+  dec(_68582,sum([creatorProcess,u(processPrevAxiom)])).
+
+acquireWrite_tc_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={u(processPrevAxiom:n0)}.
+
+acquireWrite_ts_43(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers neq {} &
+  Readers={_68582,_68652/_68654} &
+  _68582 neq _68652 &
+  dec([_68582,_68652],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_68654,set(sum([creatorProcess,u(processPrevAxiom)]))).
+
+acquireWrite_tc_43(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+\end{verbatim}
+\subsection{ReleaseRead}
+En esta operación al aplicar DNF solo tenemos dos disyunciones, una el caso de $ReleaseReadOk$ y la otra es el caso de $ReadNotAcquired$ donde se está tratando de soltar un lock que no fue adquirido previamente. \\ Para la primera disyunción aplicamos Partición Estándar sobre la diferencia de conjuntos $diff(Readers, {P}, Readers\_)$ que es la parte más importante de la operación. \\ Sobre el segundo caso generado por DNF aplicamos Cardinalidad de Conjuntos sobre los lectores para generar casos que evalúen que funciona correctamente independientemente de la cantidad de los mismos.
+
+Los comandos utilizados para la generación de los casos de prueba fueron:
+\begin{verbatim}
+ttf(rwlock).
+applydnf(releaseRead(P)).
+applysp(releaseRead_dnf_1,diff(Readers, {P}, Readers_)).
+applysc(releaseRead_dnf_2,Readers).
+prunett.
+gentc.
+exporttt.
+\end{verbatim}
+
+El árbol de pruebas es el siguiente:
+\begin{verbatim}
+releaseRead_vis
+  releaseRead_dnf_1
+    releaseRead_sp_16 -> releaseRead_tc_16
+    releaseRead_sp_17 -> releaseRead_tc_17
+  releaseRead_dnf_2
+    releaseRead_sc_21 -> releaseRead_tc_21
+    releaseRead_sc_22 -> releaseRead_tc_22
+    releaseRead_sc_23 -> releaseRead_tc_23
+\end{verbatim}
+
+Y los casos de prueba fueron generados en el archivo \textbf{rwlock\_releaseRead-tt.slog}:
+
+\begin{verbatim}
+releaseRead_ts_16(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  subset({P},Readers) &
+  Readers neq {P}.
+
+releaseRead_tc_16(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+
+releaseRead_ts_17(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P in Readers &
+  Readers neq {} &
+  {P}neq{} &
+  Readers={P}.
+
+releaseRead_tc_17(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n0)}.
+
+releaseRead_ts_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={}.
+
+releaseRead_tc_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={}.
+
+releaseRead_ts_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={_64012} &
+  dec(_64012,sum([creatorProcess,u(processPrevAxiom)])).
+
+releaseRead_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n1)}.
+
+releaseRead_ts_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P nin Readers &
+  Readers={_64012,_64082/_64084} &
+  _64012 neq _64082 &
+  dec([_64012,_64082],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_64084,set(sum([creatorProcess,u(processPrevAxiom)]))).
+
+releaseRead_tc_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  P=u(processPrevAxiom:n0) &
+  Readers={u(processPrevAxiom:n1),u(processPrevAxiom:n2)}.
+\end{verbatim}
+\subsection{ReleaseWrite}
+Al aplicar DNF sobre esta operación obtenemos tres disyunciones. La primera corresponde al caso de $ReleaseWriteOk$, la segunda corresponde a cuando se está tratando de soltar un lock que no fue adquirido por ningún proceso en modo lectura y la tercera a cuando el lock fue adquirido por un proceso distinto.\\
+Veamos los predicados generados por DNF:
+\begin{verbatim}
+releaseWrite_dnf_1(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=P &
+  WriterLockState=locked.
+
+releaseWrite_dnf_2(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked.
+
+releaseWrite_dnf_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer neq P &
+  WriterLockState=locked.
+\end{verbatim}
+
+Podemos ver que en todos los casos los valores que toman $WriterLockState$ y $Writer$ están completamente condicionados por lo que no hay ninguna táctica apropiada que se pueda aplicar sobre estas variables de estado que generen casos satisfacibles distintos a los que ya se tienen.
+
+Esto nos lleva a aplicar tácticas que involucren a las otras dos variables de estado, por un lado se podría aplicar Intervalo de Enteros a $MaxReaders$, pero esto no genera ningún caso de prueba interesante porque tener diferentes valores máximos no afecta de ninguna manera a esta operación. Por otro lado tenemos el conjunto de lectores $Readers$ donde la única táctica factible a aplicar es Cardinalidad de Conjuntos, el problema que tiene esto es que al aplicarla sobre $releaseWrite\_dnf\_1$ y $releaseWrite\_dnf\_3$ genera casos de prueba donde la variable de estado $WriterLockState$ es igual a $locked$, pero el conjunto de lectores es distinto de vacío, esto viola la invariante $InvNoReadersWhileWriter$. Esto nos deja solo con la rama $releaseWrite\_dnf\_2$ donde al aplicarle Cardinalidad de Conjuntos al conjunto de lectores estaríamos generando casos de prueba donde se está intentando soltar el lock en modo escritura, pero este no fue tomado por ningún proceso y la cantidad de lectores varía entre cero y dos para los distintos casos generados. Si bien estos casos de prueba generados son válidos, consideramos que no prueban alternativas funcionales importantes. De todas maneras se incluyó la aplicación de esta táctica.
+
+Los comandos utilizados para generar los casos de prueba fueron:
+\begin{verbatim}
+ttf(rwlock).
+applydnf(releaseWrite(P)).
+applysc(releaseWrite_dnf_2,Readers).
+prunett.
+gentc.
+exporttt.
+\end{verbatim}
+
+El árbol de pruebas generado es el siguiente:
+\begin{verbatim}
+releaseWrite_vis
+  releaseWrite_dnf_1 -> releaseWrite_tc_1
+  releaseWrite_dnf_2
+    releaseWrite_sc_21 -> releaseWrite_tc_21
+    releaseWrite_sc_22 -> releaseWrite_tc_22
+    releaseWrite_sc_23 -> releaseWrite_tc_23
+  releaseWrite_dnf_3 -> releaseWrite_tc_3
+\end{verbatim}
+
+Los casos de pruebas se guardaron en el archivo \textbf{rwlock\_releaseWrite-tt.slog}:
+\begin{verbatim}
+releaseWrite_ts_1(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=P &
+  WriterLockState=locked.
+
+releaseWrite_tc_1(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=u(processPrevAxiom:n0) &
+  P=u(processPrevAxiom:n0) &
+  WriterLockState=locked.
+
+releaseWrite_ts_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked &
+  Readers={}.
+
+releaseWrite_tc_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked &
+  Readers={}.
+
+releaseWrite_ts_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked &
+  Readers={_59792} &
+  dec(_59792,sum([creatorProcess,u(processPrevAxiom)])).
+
+releaseWrite_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked &
+  Readers={u(processPrevAxiom:n0)}.
+
+releaseWrite_ts_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked &
+  Readers={_59792,_59862/_59864} &
+  _59792 neq _59862 &
+  dec([_59792,_59862],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_59864,set(sum([creatorProcess,u(processPrevAxiom)]))).
+
+releaseWrite_tc_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  WriterLockState=unlocked &
+  Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
+
+releaseWrite_ts_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer neq P &
+  WriterLockState=locked.
+
+releaseWrite_tc_3(P,Readers,WriterLockState,Writer,MaxReaders) :-
+  Writer=u(processPrevAxiom:n0) &
+  P=u(processPrevAxiom:n1) &
+  WriterLockState=locked.
+\end{verbatim}
+\end{document}

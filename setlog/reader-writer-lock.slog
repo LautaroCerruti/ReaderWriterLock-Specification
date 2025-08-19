@@ -47,10 +47,10 @@ setMaxReadersOk(Readers,WriterLockState,Writer,N,Res,Readers_,WriterLockState_,W
     N > 0 &
     size(Readers, Card) & dec(Card, int) & Card =< N &
     MaxReaders_ = N &
-    Res = ok & 
     Readers_ = Readers &
+    WriterLockState_ = WriterLockState &
     Writer_ = Writer &
-    WriterLockState_ = WriterLockState.
+    Res = ok. 
 
 dec_p_type(maxReadersIncorrectValue(pwrprocess,lockState,process,int,int,res,pwrprocess,lockState,process,int)).
 maxReadersIncorrectValue(Readers,WriterLockState,Writer,MaxReaders,N,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
@@ -88,10 +88,10 @@ acquireReadOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLoc
     WriterLockState = unlocked &
     size(Readers, Card) & dec(Card, int) & Card < MaxReaders &
     un(Readers, {P}, Readers_) &
-    Res = ok & 
-    Writer_ = Writer &
     WriterLockState_ = WriterLockState &
-    MaxReaders_ = MaxReaders.
+    Writer_ = Writer &
+    MaxReaders_ = MaxReaders &
+    Res = ok.
 
 dec_p_type(alreadyLockedRead(pwrprocess,lockState,process,int,process,res,pwrprocess,lockState,process,int)).
 alreadyLockedRead(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
@@ -140,14 +140,14 @@ acquireWriteOk(Readers,WriterLockState,MaxReaders,P,Res,Readers_,WriterLockState
     Readers = {} &
     Writer_ = P &
     WriterLockState_ = locked & 
-    Res = ok &
     Readers_ = Readers &
-    MaxReaders_ = MaxReaders.
+    MaxReaders_ = MaxReaders &
+    Res = ok.
 
 dec_p_type(alreadyLockedWrite(pwrprocess,lockState,process,int,process,res,pwrprocess,lockState,process,int)).
 alreadyLockedWrite(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
     WriterLockState = locked &
-    P = Writer &
+    Writer = P &
     Res = errorAlreadyAcquired & 
     Readers_ = Readers &
     Writer_ = Writer &
@@ -191,10 +191,10 @@ dec_p_type(releaseReadOk(pwrprocess,lockState,process,int,process,res,pwrprocess
 releaseReadOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
     P in Readers &
     diff(Readers, {P}, Readers_) &
-    Res = ok &
     Writer_ = Writer &
     WriterLockState_ = WriterLockState & 
-    MaxReaders_ = MaxReaders.
+    MaxReaders_ = MaxReaders &
+    Res = ok.
 
 dec_p_type(readNotAcquired(pwrprocess,lockState,process,int,process,res,pwrprocess,lockState,process,int)).
 readNotAcquired(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-
@@ -220,10 +220,10 @@ releaseWriteOk(Readers,WriterLockState,Writer,MaxReaders,P,Res,Readers_,WriterLo
     WriterLockState = locked &
     Writer = P &
     WriterLockState_ = unlocked &
-    Res = ok &
-    Writer_ = Writer &
     Readers_ = Readers &
-    MaxReaders_ = MaxReaders.
+    Writer_ = Writer &
+    MaxReaders_ = MaxReaders &
+    Res = ok.
 
 dec_p_type(writeNotLocked(pwrprocess,lockState,process,int,res,pwrprocess,lockState,process,int)).
 writeNotLocked(Readers,WriterLockState,Writer,MaxReaders,Res,Readers_,WriterLockState_,Writer_,MaxReaders_) :-

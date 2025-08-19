@@ -1,7 +1,7 @@
 acquireRead_ts_12(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  MaxReaders>_43532 &
-  dec(_43532,int) &
-  size(Readers,_43532) &
+  MaxReaders>_78706 &
+  dec(_78706,int) &
+  size(Readers,_78706) &
   WriterLockState=unlocked &
   P nin Readers &
   Readers={} &
@@ -14,9 +14,9 @@ acquireRead_tc_12(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P=u(processPrevAxiom:n0).
 
 acquireRead_ts_14(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  MaxReaders>_43532 &
-  dec(_43532,int) &
-  size(Readers,_43532) &
+  MaxReaders>_78706 &
+  dec(_78706,int) &
+  size(Readers,_78706) &
   WriterLockState=unlocked &
   P nin Readers &
   Readers neq {} &
@@ -37,8 +37,8 @@ acquireRead_tc_2(P,Readers,WriterLockState,Writer,MaxReaders) :-
 
 acquireRead_ts_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P in Readers &
-  Readers={_44318} &
-  dec(_44318,sum([creatorProcess,u(processPrevAxiom)])).
+  Readers={_79492} &
+  dec(_79492,sum([creatorProcess,u(processPrevAxiom)])).
 
 acquireRead_tc_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P=u(processPrevAxiom:n0) &
@@ -46,19 +46,19 @@ acquireRead_tc_32(P,Readers,WriterLockState,Writer,MaxReaders) :-
 
 acquireRead_ts_33(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P in Readers &
-  Readers={_44318,_44388/_44390} &
-  _44318 neq _44388 &
-  dec([_44318,_44388],sum([creatorProcess,u(processPrevAxiom)])) &
-  dec(_44390,set(sum([creatorProcess,u(processPrevAxiom)]))).
+  Readers={_79492,_79562/_79564} &
+  _79492 neq _79562 &
+  dec([_79492,_79562],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_79564,set(sum([creatorProcess,u(processPrevAxiom)]))).
 
 acquireRead_tc_33(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P=u(processPrevAxiom:n0) &
   Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
 
 acquireRead_ts_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  _43908=MaxReaders &
-  dec(_43908,int) &
-  size(Readers,_43908) &
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
   MaxReaders<1.
 
 acquireRead_tc_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -66,9 +66,9 @@ acquireRead_tc_41(P,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={}.
 
 acquireRead_ts_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  _43908=MaxReaders &
-  dec(_43908,int) &
-  size(Readers,_43908) &
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
   MaxReaders=1.
 
 acquireRead_tc_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -76,9 +76,9 @@ acquireRead_tc_42(P,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={u(processPrevAxiom:n0)}.
 
 acquireRead_ts_44(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  _43908=MaxReaders &
-  dec(_43908,int) &
-  size(Readers,_43908) &
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
   MaxReaders=2.
 
 acquireRead_tc_44(P,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -86,9 +86,9 @@ acquireRead_tc_44(P,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1)}.
 
 acquireRead_ts_46(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  _43908=MaxReaders &
-  dec(_43908,int) &
-  size(Readers,_43908) &
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
   MaxReaders=3.
 
 acquireRead_tc_46(P,Readers,WriterLockState,Writer,MaxReaders) :-
@@ -96,9 +96,9 @@ acquireRead_tc_46(P,Readers,WriterLockState,Writer,MaxReaders) :-
   Readers={u(processPrevAxiom:n0),u(processPrevAxiom:n1),u(processPrevAxiom:n2)}.
 
 acquireRead_ts_47(P,Readers,WriterLockState,Writer,MaxReaders) :-
-  _43908=MaxReaders &
-  dec(_43908,int) &
-  size(Readers,_43908) &
+  _79082=MaxReaders &
+  dec(_79082,int) &
+  size(Readers,_79082) &
   3<MaxReaders.
 
 acquireRead_tc_47(P,Readers,WriterLockState,Writer,MaxReaders) :-

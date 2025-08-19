@@ -29,8 +29,8 @@ releaseRead_tc_21(P,Readers,WriterLockState,Writer,MaxReaders) :-
 
 releaseRead_ts_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P nin Readers &
-  Readers={_56334} &
-  dec(_56334,sum([creatorProcess,u(processPrevAxiom)])).
+  Readers={_64012} &
+  dec(_64012,sum([creatorProcess,u(processPrevAxiom)])).
 
 releaseRead_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P=u(processPrevAxiom:n0) &
@@ -38,10 +38,10 @@ releaseRead_tc_22(P,Readers,WriterLockState,Writer,MaxReaders) :-
 
 releaseRead_ts_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P nin Readers &
-  Readers={_56334,_56404/_56406} &
-  _56334 neq _56404 &
-  dec([_56334,_56404],sum([creatorProcess,u(processPrevAxiom)])) &
-  dec(_56406,set(sum([creatorProcess,u(processPrevAxiom)]))).
+  Readers={_64012,_64082/_64084} &
+  _64012 neq _64082 &
+  dec([_64012,_64082],sum([creatorProcess,u(processPrevAxiom)])) &
+  dec(_64084,set(sum([creatorProcess,u(processPrevAxiom)]))).
 
 releaseRead_tc_23(P,Readers,WriterLockState,Writer,MaxReaders) :-
   P=u(processPrevAxiom:n0) &

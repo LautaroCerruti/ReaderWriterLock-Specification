@@ -10,23 +10,23 @@ Given RESPONSE
 
 Var ok: RESPONSE
 
-Var cantBeLessThanOne: RESPONSE
+Var errorCantBeLessThanOne: RESPONSE
 
-Var cantAllowMoreReaders: RESPONSE
+Var errorCantAllowMoreReaders: RESPONSE
 
-Var lockedByReader: RESPONSE
+Var errorCantBeLessThanActualReaders: RESPONSE
+
+Var errorLockedByWriter: RESPONSE
+
+Var errorLockedByReader: RESPONSE
 
 Var errorReadNotAcquired: RESPONSE
 
-Var cantBeLessThanActualReaders: RESPONSE
-
-Var writeLockedByOtherProcess: RESPONSE
-
 Var errorWriteNotLocked: RESPONSE
 
-Var alreadyAcquired: RESPONSE
+Var errorWriteLockedByOtherProcess: RESPONSE
 
-Var lockedByWriter: RESPONSE
+Var errorAlreadyAcquired: RESPONSE
 
 Var creatorProcess: PROCESS
 
@@ -178,7 +178,7 @@ Schema AlreadyLockedRead
     res!: RESPONSE
 End
 
-Schema ProcessIsWriting
+Schema MaxReadersReached
     readers: P PROCESS
     writerLockState: STATE
     writer: PROCESS
@@ -190,7 +190,7 @@ Schema ProcessIsWriting
     res!: RESPONSE
 End
 
-Schema MaxReadersReached
+Schema ProcessIsWriting
     readers: P PROCESS
     writerLockState: STATE
     writer: PROCESS
@@ -254,7 +254,7 @@ Schema AlreadyLockedWrite
     res!: RESPONSE
 End
 
-Schema ErrorWriteLockedByOtherProcess
+Schema WriteLockedByOtherProcess
     readers: P PROCESS
     writerLockState: STATE
     writer: PROCESS
